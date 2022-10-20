@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed, toRefs } from 'vue'
-import type { Conversation, Message, User } from '@/client/types/business'
+import type { Conversation, User } from '@/client/types/business'
 import { useAuthStore } from '@/stores/auth'
 
 export const useMessengerStore = defineStore('messenger', () => {
@@ -20,7 +20,9 @@ export const useMessengerStore = defineStore('messenger', () => {
 
     // Getters
 
-    const authenticatedUsername = computed(() => userRef.value?.username || null)
+    const authenticatedUsername = computed(
+        () => userRef.value?.username || null
+    )
 
     const users = computed(() =>
         usersRef.value.map((user) => {
@@ -33,7 +35,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     const conversations = computed(() =>
         conversationsRef.value.map((conversation) => {
             return {
-                ...conversation
+                ...conversation,
             }
         })
     )

@@ -14,7 +14,6 @@ async function openConversation() {
 
     console.log('Conversation ouverte !')
 }
-
 </script>
 
 <template>

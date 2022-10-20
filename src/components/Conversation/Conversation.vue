@@ -25,7 +25,7 @@ watch(currentConversation, (newConversation, oldConversation) => {
 
 function scrollBottom() {
     setTimeout(() => {
-        if(scrollElement.value) {
+        if (scrollElement.value) {
             scrollElement.value.scrollTop = scrollElement.value.scrollHeight
         }
     }, 0)
