@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toRefs } from 'vue'
+import { toRefs,computed,ref } from 'vue'
 import { useHighLevelClientEmits } from '@/composables/emits'
 import { useMessengerStore } from '@/stores/messenger'
 
@@ -9,11 +9,21 @@ const clientEmits = useHighLevelClientEmits()
 
 const { users } = toRefs(messengerStore)
 
+const searchInput = ref("");
+
 async function openConversation() {
     await clientEmits.createOneToOneConversation('Alice')
 
     console.log('Conversation ouverte !')
 }
+
+const filteredUsers = computed(() => 
+
+    users.value.filter((user) => {
+        return user.username.toLowerCase().includes(searchInput.value.toLowerCase());
+    })
+    
+)
 
 </script>
 
@@ -26,6 +36,7 @@ async function openConversation() {
                         class="prompt"
                         type="text"
                         placeholder="Rechercher un utilisateur"
+                        v-model="searchInput"
                     />
                     <i class="search icon"></i>
                 </div>
@@ -33,7 +44,7 @@ async function openConversation() {
             </div>
         </div>
         <div class="users">
-            <div class="user" v-for="user in users">
+            <div class="user" v-for="user in filteredUsers" :key="user.username">
                 <img :src="user.picture_url" />
                 <span class="">{{ user.username }}</span>
             </div>
