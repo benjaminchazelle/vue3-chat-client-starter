@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { toRefs } from 'vue'
+import { toRefs, ref, computed } from 'vue'
 import { useHighLevelClientEmits } from '@/composables/emits'
 import { useMessengerStore } from '@/stores/messenger'
+import type { User } from '@/client/types/business';
 
 const messengerStore = useMessengerStore()
 
@@ -14,6 +15,35 @@ async function openConversation() {
 
     console.log('Conversation ouverte !')
 }
+
+const selectedUsers: User[] = []
+
+function userIsSelected(user: User): boolean
+{
+    if(selectedUsers.includes(user))
+    {
+        return true
+    }
+    else
+    {
+        return false
+    } 
+}
+
+function toggleUser(user: User): void
+{
+    if(userIsSelected(user))
+    {
+        selectedUsers.splice(selectedUsers.indexOf(user), 1);
+    }
+    else
+    {
+        selectedUsers.push(user);
+    }
+    console.log(selectedUsers)
+}
+
+
 
 </script>
 
@@ -33,7 +63,7 @@ async function openConversation() {
             </div>
         </div>
         <div class="users">
-            <div class="user" v-for="user in users">
+            <div @click="toggleUser(user)" :class="userIsSelected(user) ? 'user selected' : 'user'" v-for="user in users" :key="user.username">
                 <img :src="user.picture_url" />
                 <span class="">{{ user.username }}</span>
             </div>
