@@ -21,8 +21,7 @@ const filteredUsers = computed(() =>
 
     users.value.filter((user) => {
         return user.username.toLowerCase().includes(searchInput.value.toLowerCase());
-        }
-    )
+    })
     
 )
 
