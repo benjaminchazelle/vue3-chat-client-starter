@@ -13,7 +13,7 @@ String
 {
     username: Username,         // 'Alice'
     picture_url: String,        // 'https://source.unsplash.com/q65bNe9fW-w/100x100'
-    awake: Boolean              // true
+    awake: Boolean              // true // Indique si l'utilisateur est connecté (en vert)
 }
 ```
 
@@ -23,7 +23,7 @@ String
 {
     id: String,                                                             // '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d'
     type: Enum<'one_to_one', 'many_to_many'>,
-    participants: Array<every Username>,                                          // [ 'Alice', 'Bob' ],
+    participants: Array<every Username>,                                    // [ 'Alice', 'Bob' ],
     messages: Array<Message>,
     title: null | String,                                                   // 'Conversation title'
     theme: Enum<'BLUE', 'RED', 'RAINBOW'>,
