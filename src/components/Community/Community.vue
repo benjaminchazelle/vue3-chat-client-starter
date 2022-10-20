@@ -33,29 +33,9 @@ async function openConversation() {
             </div>
         </div>
         <div class="users">
-            <div class="selected user">
-                <img src="https://source.unsplash.com/7omHUGhhmZ0/100x100" />
-                <span class="">Bob</span>
-            </div>
-            <div class="user">
-                <img src="https://source.unsplash.com/rITj7p2KeZE/100x100" />
-                <span class="">Cha</span>
-            </div>
-            <div class="user">
-                <img src="https://source.unsplash.com/FUcupae92P4/100x100" />
-                <span class="available">Derek</span>
-            </div>
-            <div class="user">
-                <img src="https://source.unsplash.com/4U1x6459Q-s/100x100" />
-                <span class="">Emilio</span>
-            </div>
-            <div class="selected user">
-                <img src="https://source.unsplash.com/3402kvtHhOo/100x100" />
-                <span class="available">Fabrice</span>
-            </div>
-            <div class="user">
-                <img src="https://source.unsplash.com/J7Cf1Gch49E/100x100" />
-                <span class="">Gael</span>
+            <div class="user" v-for="user in users">
+                <img :src="user.picture_url" />
+                <span class="">{{ user.username }}</span>
             </div>
         </div>
 
