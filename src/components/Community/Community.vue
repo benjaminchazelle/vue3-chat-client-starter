@@ -10,6 +10,8 @@ const clientEmits = useHighLevelClientEmits()
 
 const { users } = toRefs(messengerStore)
 
+const searchInput = ref("");
+
 async function openConversation() {
     await clientEmits.createOneToOneConversation('Alice')
 
@@ -33,10 +35,16 @@ function toggleUser(user: User): void
     {
         selectedUsers.value.push(user);
     }
-    console.log(selectedUsers)
 }
 
 
+const filteredUsers = computed(() => 
+
+    users.value.filter((user) => {
+        return user.username.toLowerCase().includes(searchInput.value.toLowerCase());
+    })
+    
+)
 
 </script>
 
@@ -49,6 +57,7 @@ function toggleUser(user: User): void
                         class="prompt"
                         type="text"
                         placeholder="Rechercher un utilisateur"
+                        v-model="searchInput"
                     />
                     <i class="search icon"></i>
                 </div>
@@ -56,7 +65,7 @@ function toggleUser(user: User): void
             </div>
         </div>
         <div class="users">
-            <div class="user" v-for="user in users" :key="user.username" @click="toggleUser(user)" :class="{ selected: userIsSelected(user)}">
+            <div class="user" v-for="user in filteredUsers" :key="user.username" @click="toggleUser(user)" :class="{ selected: userIsSelected(user)}">
                 <img :src="user.picture_url" />
                 <span class="">{{ user.username }}</span>
             </div>
