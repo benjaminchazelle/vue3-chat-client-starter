@@ -10,12 +10,17 @@ const clientEmits = useHighLevelClientEmits()
 
 const { users } = toRefs(messengerStore)
 
-const searchInput = ref("");
+const searchInput = ref('');
 
-async function openConversation() {
-    await clientEmits.createOneToOneConversation('Alice')
-
-    console.log('Conversation ouverte !')
+async function openConversation(users: User[]) {
+    if (users.length === 1)
+    {
+        await clientEmits.createOneToOneConversation(users[0].username);
+    }
+    else if (users.length > 1) {
+        // await clientEmits
+    }
+    
 }
 
 const selectedUsers = ref<User[]>([])
@@ -72,8 +77,9 @@ const filteredUsers = computed(() =>
         </div>
 
         <div class="actions">
-            <button class="ui primary big button" @click="openConversation">
+            <button class="ui primary big button" @click="openConversation(selectedUsers)">
                 <i class="conversation icon"></i>
+                <!--  TODO: Change Label - let's go @Zekix27  -->
                 <span>Ouvrir la conversation (2)</span>
             </button>
         </div>

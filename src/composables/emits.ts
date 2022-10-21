@@ -31,7 +31,7 @@ export function useHighLevelClientEmits() {
 
             const { conversation } = response
 
-            // messengerStore.upsertConversation(conversation)
+            messengerStore.upsertConversation(conversation)
 
             router.push({
                 name: 'Conversation',
