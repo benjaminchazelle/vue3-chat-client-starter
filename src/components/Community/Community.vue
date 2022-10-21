@@ -16,29 +16,22 @@ async function openConversation() {
     console.log('Conversation ouverte !')
 }
 
-const selectedUsers: User[] = []
+const selectedUsers = ref<User[]>([])
 
 function userIsSelected(user: User): boolean
 {
-    if(selectedUsers.includes(user))
-    {
-        return true
-    }
-    else
-    {
-        return false
-    } 
+    return selectedUsers.value.includes(user)
 }
 
 function toggleUser(user: User): void
 {
     if(userIsSelected(user))
     {
-        selectedUsers.splice(selectedUsers.indexOf(user), 1);
+        selectedUsers.value.splice(selectedUsers.value.indexOf(user), 1);
     }
     else
     {
-        selectedUsers.push(user);
+        selectedUsers.value.push(user);
     }
     console.log(selectedUsers)
 }
@@ -63,7 +56,7 @@ function toggleUser(user: User): void
             </div>
         </div>
         <div class="users">
-            <div @click="toggleUser(user)" :class="userIsSelected(user) ? 'user selected' : 'user'" v-for="user in users" :key="user.username">
+            <div class="user" v-for="user in users" :key="user.username" @click="toggleUser(user)" :class="{ selected: userIsSelected(user)}">
                 <img :src="user.picture_url" />
                 <span class="">{{ user.username }}</span>
             </div>
