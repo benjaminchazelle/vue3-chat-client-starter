@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { toRefs,computed,ref } from 'vue'
+import { toRefs, ref, computed } from 'vue'
 import { useHighLevelClientEmits } from '@/composables/emits'
 import { useMessengerStore } from '@/stores/messenger'
+import type { User } from '@/client/types/business';
 
 const messengerStore = useMessengerStore()
 
@@ -16,6 +17,26 @@ async function openConversation() {
 
     console.log('Conversation ouverte !')
 }
+
+const selectedUsers = ref<User[]>([])
+
+function userIsSelected(user: User): boolean
+{
+    return selectedUsers.value.includes(user)
+}
+
+function toggleUser(user: User): void
+{
+    if(userIsSelected(user))
+    {
+        selectedUsers.value.splice(selectedUsers.value.indexOf(user), 1);
+    }
+    else
+    {
+        selectedUsers.value.push(user);
+    }
+}
+
 
 const filteredUsers = computed(() => 
 
@@ -44,7 +65,7 @@ const filteredUsers = computed(() =>
             </div>
         </div>
         <div class="users">
-            <div class="user" v-for="user in filteredUsers" :key="user.username">
+            <div class="user" v-for="user in filteredUsers" :key="user.username" @click="toggleUser(user)" :class="{ selected: userIsSelected(user)}">
                 <img :src="user.picture_url" />
                 <span class="">{{ user.username }}</span>
             </div>
