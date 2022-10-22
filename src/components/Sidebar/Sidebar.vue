@@ -54,13 +54,17 @@ function titleConversation(conversation: Conversation): string {
     }
 
     const participant = conversation.participants.find(participant => participant !== authenticatedUsername.value);
-    
+
     if (participant) {
         return participant;
     }
 
     return 'Anonymous';
-} 
+}
+
+function sortConversations(conversations: Conversation[]): Conversation[] {
+    return conversations.sort((a, b) => ('' + b.updated_at).localeCompare(a.updated_at))
+}
 
 </script>
 
@@ -113,7 +117,7 @@ function titleConversation(conversation: Conversation): string {
                 </div>
             </div>
             <div
-                v-for="conversation in conversations"
+                v-for="conversation in sortConversations(conversations)"
                 class="conversation"
                 :key="conversation.id"
                 :class="{
@@ -141,16 +145,25 @@ function titleConversation(conversation: Conversation): string {
                             {{
                                 convertStringToDate(
                                     conversation.updated_at
-                                ).toLocaleTimeString()
+                                ).toLocaleDateString()
                             }}
                         </span>
                     </div>
-                    <div class="text">
-                        {{
-                            conversation.messages.length === 0
-                                ? 'Nouvelle conversation'
-                                : conversation.messages[0].content
-                        }}
+                    <div class="metadata">
+                        <div class="text">
+                            {{
+                                conversation.messages.length === 0
+                                    ? 'Nouvelle conversation'
+                                    : conversation.messages[0].content
+                            }}
+                        </div>
+                        <span class="time">
+                            {{
+                                convertStringToDate(
+                                    conversation.updated_at
+                                ).toLocaleTimeString()
+                            }}
+                        </span>
                     </div>
                 </div>
             </div>
