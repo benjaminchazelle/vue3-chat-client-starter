@@ -12,7 +12,7 @@ const { users } = toRefs(messengerStore)
 
 const searchInput = ref('');
 
-let openingConversation = ref(false);
+const openingConversation = ref(false);
 
 async function openConversation(users: User[]) {
     if (users.length === 0) return

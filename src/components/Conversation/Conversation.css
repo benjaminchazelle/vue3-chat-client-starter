@@ -19,6 +19,7 @@
     background: black;
     color: white;
     margin: 0 5px;
+    cursor: pointer;
 }
 
 .avatar i {
