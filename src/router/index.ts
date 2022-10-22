@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Community from '@/components/Community/Community.vue'
 import Conversation from '@/components/Conversation/Conversation.vue'
+import GroupInformation from '@/components/GroupInformation/GroupInformation.vue'
 import Search from '@/components/Search/Search.vue'
 
 const router = createRouter({
@@ -20,6 +21,11 @@ const router = createRouter({
             path: '/search',
             name: 'Search',
             component: Search,
+        },
+        {
+            path: '/group-information/:id',
+            name: 'GroupInformation',
+            component: GroupInformation,
         },
         {
             path: '/:pathMatch(.*)*',

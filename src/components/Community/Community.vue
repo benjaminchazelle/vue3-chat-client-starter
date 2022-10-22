@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { toRefs } from 'vue'
+import { toRefs, ref, computed } from 'vue'
+import type { User } from '@/client/types/business'
 import { useHighLevelClientEmits } from '@/composables/emits'
 import { useMessengerStore } from '@/stores/messenger'
 
@@ -9,12 +10,44 @@ const clientEmits = useHighLevelClientEmits()
 
 const { users } = toRefs(messengerStore)
 
-async function openConversation() {
-    await clientEmits.createOneToOneConversation('Alice')
+const searchInput = ref('')
 
-    console.log('Conversation ouverte !')
+const openingConversation = ref(false)
+
+async function openConversation(users: User[]) {
+    if (users.length === 0) return
+
+    openingConversation.value = true
+
+    if (users.length === 1) {
+        await clientEmits.createOneToOneConversation(users[0].username)
+    } else if (users.length > 1) {
+        const names = computed(() => users.map((user) => user.username))
+        await clientEmits.createManyToManyConversation(names.value)
+    }
 }
 
+const selectedUsers = ref<User[]>([])
+
+function userIsSelected(user: User): boolean {
+    return selectedUsers.value.includes(user)
+}
+
+function toggleUser(user: User): void {
+    if (userIsSelected(user)) {
+        selectedUsers.value.splice(selectedUsers.value.indexOf(user), 1)
+    } else {
+        selectedUsers.value.push(user)
+    }
+}
+
+const filteredUsers = computed(() =>
+    users.value.filter((user) => {
+        return user.username
+            .toLowerCase()
+            .includes(searchInput.value.toLowerCase())
+    })
+)
 </script>
 
 <template>
@@ -26,6 +59,7 @@ async function openConversation() {
                         class="prompt"
                         type="text"
                         placeholder="Rechercher un utilisateur"
+                        v-model="searchInput"
                     />
                     <i class="search icon"></i>
                 </div>
@@ -33,36 +67,31 @@ async function openConversation() {
             </div>
         </div>
         <div class="users">
-            <div class="selected user">
-                <img src="https://source.unsplash.com/7omHUGhhmZ0/100x100" />
-                <span class="">Bob</span>
-            </div>
-            <div class="user">
-                <img src="https://source.unsplash.com/rITj7p2KeZE/100x100" />
-                <span class="">Cha</span>
-            </div>
-            <div class="user">
-                <img src="https://source.unsplash.com/FUcupae92P4/100x100" />
-                <span class="available">Derek</span>
-            </div>
-            <div class="user">
-                <img src="https://source.unsplash.com/4U1x6459Q-s/100x100" />
-                <span class="">Emilio</span>
-            </div>
-            <div class="selected user">
-                <img src="https://source.unsplash.com/3402kvtHhOo/100x100" />
-                <span class="available">Fabrice</span>
-            </div>
-            <div class="user">
-                <img src="https://source.unsplash.com/J7Cf1Gch49E/100x100" />
-                <span class="">Gael</span>
+            <div
+                class="user"
+                v-for="user in filteredUsers"
+                :key="user.username"
+                @click="toggleUser(user)"
+                :class="{ selected: userIsSelected(user) }"
+            >
+                <img :src="user.picture_url" />
+                <span class="">{{ user.username }}</span>
             </div>
         </div>
 
         <div class="actions">
-            <button class="ui primary big button" @click="openConversation">
+            <button
+                class="ui primary big button"
+                @click="openConversation(selectedUsers)"
+            >
                 <i class="conversation icon"></i>
-                <span>Ouvrir la conversation (2)</span>
+                <span>
+                    {{
+                        openingConversation
+                            ? `Ouverture de la conversation...`
+                            : `Ouvrir la conversation (${selectedUsers.length})`
+                    }}
+                </span>
             </button>
         </div>
     </div>

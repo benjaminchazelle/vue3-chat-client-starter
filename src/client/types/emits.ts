@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import type { Auth, Conversation, Message, User } from '@/client/types/business'
 
 export interface Emit {
