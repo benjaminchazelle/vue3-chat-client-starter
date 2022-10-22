@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, toRefs, watch } from 'vue'
-import Group from '@/components/Group/Group.vue'
+import { toRefs } from 'vue'
 import { useMessengerStore } from '@/stores/messenger'
 import type { Message } from '@/client/types/business';
 

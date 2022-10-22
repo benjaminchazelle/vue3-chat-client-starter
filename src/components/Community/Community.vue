@@ -12,7 +12,13 @@ const { users } = toRefs(messengerStore)
 
 const searchInput = ref('');
 
+let openingConversation = ref(false);
+
 async function openConversation(users: User[]) {
+    if (users.length === 0) return
+
+    openingConversation.value = true;
+
     if (users.length === 1)
     {
         await clientEmits.createOneToOneConversation(users[0].username);
@@ -21,7 +27,6 @@ async function openConversation(users: User[]) {
         const names = computed(() => users.map((user) => user.username));
         await clientEmits.createManyToManyConversation(names.value);
     }
-    
 }
 
 const selectedUsers = ref<User[]>([])
@@ -80,8 +85,7 @@ const filteredUsers = computed(() =>
         <div class="actions">
             <button class="ui primary big button" @click="openConversation(selectedUsers)">
                 <i class="conversation icon"></i>
-                <!--  TODO: Change Label - let's go @Zekix27  -->
-                <span>Ouvrir la conversation (2)</span>
+                <span>{{ openingConversation ? `Ouverture de la conversation...` : `Ouvrir la conversation (${ selectedUsers.length})` }}</span>
             </button>
         </div>
     </div>
