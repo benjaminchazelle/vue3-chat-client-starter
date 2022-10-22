@@ -40,7 +40,7 @@ export default class Client {
         for (const eventName of Object.keys(this.callbacks)) {
             this.socket.removeAllListeners(eventName)
             this.socket.on(
-                 eventName,
+                eventName,
                 async (data: unknown, ack: () => void) => {
                     console.log(this.title, 'on', '@' + eventName, data)
                     this.callbacks[eventName](data)
@@ -88,7 +88,6 @@ export default class Client {
         payload: E['payload'],
         requireAuth: E['authenticated'] = true
     ): Promise<E['response']> {
-
         let token: string
 
         if (requireAuth) {

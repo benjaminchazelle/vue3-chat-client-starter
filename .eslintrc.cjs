@@ -78,6 +78,6 @@ module.exports = {
             },
         ],
         'vue/multi-word-component-names': 'off',
-        'prettier/prettier': ['error', { endOfLine: 'off' }],
+        'prettier/prettier': ['error', { endOfLine: 'auto' }],
     },
 }
