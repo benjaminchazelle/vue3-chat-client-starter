@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onUpdated, ref, toRefs, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import Group from '@/components/Group/Group.vue'
 import { useMessengerStore } from '@/stores/messenger'
-import { useRouter, useRoute } from 'vue-router'
 
 const groupPanel = ref(false)
 
@@ -12,20 +12,21 @@ const messengerStore = useMessengerStore()
 
 const { currentConversation } = toRefs(messengerStore)
 
-const { setCurrentConversationId } = messengerStore;
-
+const { setCurrentConversationId } = messengerStore
 
 const router = useRouter()
 const route = useRoute()
 
-const conversationId = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id
+const conversationId = Array.isArray(route.params.id)
+    ? route.params.id[0]
+    : route.params.id
 
-setCurrentConversationId(conversationId);
+setCurrentConversationId(conversationId)
 
 function openGroupInformation() {
-    router.push({ 
+    router.push({
         name: 'GroupInformation',
-        params: { id: conversationId}
+        params: { id: conversationId },
     })
 }
 
@@ -43,7 +44,7 @@ watch(currentConversation, (newConversation, oldConversation) => {
 
 function scrollBottom() {
     setTimeout(() => {
-        if(scrollElement.value) {
+        if (scrollElement.value) {
             scrollElement.value.scrollTop = scrollElement.value.scrollHeight
         }
     }, 0)

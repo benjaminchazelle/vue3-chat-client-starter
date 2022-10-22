@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { toRefs, ref, computed } from 'vue'
+import type { User } from '@/client/types/business'
 import { useHighLevelClientEmits } from '@/composables/emits'
 import { useMessengerStore } from '@/stores/messenger'
-import type { User } from '@/client/types/business';
 
 const messengerStore = useMessengerStore()
 
@@ -10,53 +10,44 @@ const clientEmits = useHighLevelClientEmits()
 
 const { users } = toRefs(messengerStore)
 
-const searchInput = ref('');
+const searchInput = ref('')
 
-const openingConversation = ref(false);
+const openingConversation = ref(false)
 
 async function openConversation(users: User[]) {
     if (users.length === 0) return
 
-    openingConversation.value = true;
+    openingConversation.value = true
 
-    if (users.length === 1)
-    {
-        await clientEmits.createOneToOneConversation(users[0].username);
-    }
-    else if (users.length > 1) {
-        const names = computed(() => users.map((user) => user.username));
-        await clientEmits.createManyToManyConversation(names.value);
+    if (users.length === 1) {
+        await clientEmits.createOneToOneConversation(users[0].username)
+    } else if (users.length > 1) {
+        const names = computed(() => users.map((user) => user.username))
+        await clientEmits.createManyToManyConversation(names.value)
     }
 }
 
 const selectedUsers = ref<User[]>([])
 
-function userIsSelected(user: User): boolean
-{
+function userIsSelected(user: User): boolean {
     return selectedUsers.value.includes(user)
 }
 
-function toggleUser(user: User): void
-{
-    if(userIsSelected(user))
-    {
-        selectedUsers.value.splice(selectedUsers.value.indexOf(user), 1);
-    }
-    else
-    {
-        selectedUsers.value.push(user);
+function toggleUser(user: User): void {
+    if (userIsSelected(user)) {
+        selectedUsers.value.splice(selectedUsers.value.indexOf(user), 1)
+    } else {
+        selectedUsers.value.push(user)
     }
 }
 
-
-const filteredUsers = computed(() => 
-
+const filteredUsers = computed(() =>
     users.value.filter((user) => {
-        return user.username.toLowerCase().includes(searchInput.value.toLowerCase());
+        return user.username
+            .toLowerCase()
+            .includes(searchInput.value.toLowerCase())
     })
-    
 )
-
 </script>
 
 <template>
@@ -76,16 +67,31 @@ const filteredUsers = computed(() =>
             </div>
         </div>
         <div class="users">
-            <div class="user" v-for="user in filteredUsers" :key="user.username" @click="toggleUser(user)" :class="{ selected: userIsSelected(user)}">
+            <div
+                class="user"
+                v-for="user in filteredUsers"
+                :key="user.username"
+                @click="toggleUser(user)"
+                :class="{ selected: userIsSelected(user) }"
+            >
                 <img :src="user.picture_url" />
                 <span class="">{{ user.username }}</span>
             </div>
         </div>
 
         <div class="actions">
-            <button class="ui primary big button" @click="openConversation(selectedUsers)">
+            <button
+                class="ui primary big button"
+                @click="openConversation(selectedUsers)"
+            >
                 <i class="conversation icon"></i>
-                <span>{{ openingConversation ? `Ouverture de la conversation...` : `Ouvrir la conversation (${ selectedUsers.length})` }}</span>
+                <span>
+                    {{
+                        openingConversation
+                            ? `Ouverture de la conversation...`
+                            : `Ouvrir la conversation (${selectedUsers.length})`
+                    }}
+                </span>
             </button>
         </div>
     </div>
