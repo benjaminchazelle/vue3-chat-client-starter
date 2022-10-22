@@ -2,6 +2,7 @@
 import { onMounted, onUpdated, ref, toRefs, watch } from 'vue'
 import Group from '@/components/Group/Group.vue'
 import { useMessengerStore } from '@/stores/messenger'
+import { useRouter } from 'vue-router'
 
 const groupPanel = ref(false)
 
@@ -10,6 +11,15 @@ const scrollElement = ref<HTMLElement | null>(null)
 const messengerStore = useMessengerStore()
 
 const { currentConversation } = toRefs(messengerStore)
+
+const router = useRouter()
+
+function openGroupInformation() {
+    router.push({ 
+        name: 'GroupInformation'
+    })
+    
+}
 
 onMounted(() => {
     scrollBottom()
@@ -39,7 +49,7 @@ function scrollBottom() {
             <!--        class="avatar"-->
             <!--        src="https://source.unsplash.com/FUcupae92P4/100x100"-->
             <!--      />-->
-            <div class="avatar">
+            <div @click="openGroupInformation" class="avatar">
                 <i class="ui users icon"></i>
             </div>
 
