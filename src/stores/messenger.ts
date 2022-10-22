@@ -51,6 +51,7 @@ export const useMessengerStore = defineStore('messenger', () => {
         users,
         conversations,
         currentConversation,
+        setConversations,
         setCurrentConversationId,
         setUsers,
         upsertUser,
@@ -65,6 +66,10 @@ export const useMessengerStore = defineStore('messenger', () => {
 
     function setUsers(users: User[]) {
         usersRef.value = users
+    }
+
+    function setConversations(conversations: Conversation[]) {
+        conversationsRef.value = conversations
     }
 
     function upsertUser(user: User) {

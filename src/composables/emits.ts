@@ -1,6 +1,7 @@
 import { useRouter } from 'vue-router'
 import type {
     CreateManyToManyConversationEmit,
+    GetConversationsEmit,
     GetOrCreateOneToOneConversationEmit,
     GetUsersEmit,
 } from '@/client/types/emits'
@@ -21,6 +22,14 @@ export function useHighLevelClientEmits() {
                 {}
             )
             messengerStore.setUsers(users)
+        },
+
+        async getConversations() {
+            const { conversations } = await chatClient.emit<GetConversationsEmit>(
+                '@getConversations',
+                {}
+            )
+            messengerStore.setConversations(conversations)
         },
 
         async createOneToOneConversation(username: string) {
