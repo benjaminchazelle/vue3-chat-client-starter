@@ -2,7 +2,7 @@
 import { onMounted, onUpdated, ref, toRefs, watch } from 'vue'
 import Group from '@/components/Group/Group.vue'
 import { useMessengerStore } from '@/stores/messenger'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const groupPanel = ref(false)
 
@@ -12,13 +12,21 @@ const messengerStore = useMessengerStore()
 
 const { currentConversation } = toRefs(messengerStore)
 
+const { setCurrentConversationId } = messengerStore;
+
+
 const router = useRouter()
+const route = useRoute()
+
+const conversationId = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id
+
+setCurrentConversationId(conversationId);
 
 function openGroupInformation() {
     router.push({ 
-        name: 'GroupInformation'
+        name: 'GroupInformation',
+        params: { id: conversationId}
     })
-    
 }
 
 onMounted(() => {

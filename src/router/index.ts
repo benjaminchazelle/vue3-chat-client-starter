@@ -23,7 +23,7 @@ const router = createRouter({
             component: Search,
         },
         {
-            path: '/group-information',
+            path: '/group-information/:id',
             name: 'GroupInformation',
             component: GroupInformation,
         },
