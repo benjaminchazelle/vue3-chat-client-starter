@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toRefs } from 'vue'
+import { toRefs, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Conversation } from '@/client/types/business'
 import { useAuthStore } from '@/stores/auth'
@@ -14,6 +14,8 @@ const messengerStore = useMessengerStore()
 const { user } = toRefs(authStore)
 const { logout } = authStore
 
+const searchInput = ref('')
+
 const { conversations } = toRefs(messengerStore)
 
 function openCommunity() {
@@ -27,6 +29,14 @@ function openMessageSearch() {
 function openConversation(id: Conversation['id']) {
     router.push({ name: 'Conversation', params: { id } })
 }
+
+const filteredConversations = computed(() =>
+    conversations.value.filter((conversation) => {
+        return conversation.title
+            .toLowerCase()
+            .includes(searchInput.value.toLowerCase())
+    })
+)
 </script>
 
 <template>
@@ -72,17 +82,20 @@ function openConversation(id: Conversation['id']) {
                             class="prompt"
                             placeholder="Rechercher une conversation"
                             type="text"
+                            v-model="searchInput"
                         />
                         <i class="search icon"></i>
                     </div>
                 </div>
             </div>
+
             <div
-                class="conversation new"
-                title="Bob"
-                @click="
-                    openConversation('9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d')
-                "
+                class="conversation"
+                v-for="conversation in filteredConversations"
+                :key="conversation.id"
+                :title="conversation.title"
+                @click="openConversation(conversation.id)"
+                :class="{}"
             >
                 <a class="avatar">
                     <img
@@ -93,74 +106,11 @@ function openConversation(id: Conversation['id']) {
                     <div class="metadata">
                         <div class="title">
                             <i class="ui small icon circle"></i>
-                            Bob
+                            {{ conversation.title }}
                         </div>
-                        <span class="time">01:30:58</span>
+                        <span class="time">{{ conversation.updated_at }}</span>
                     </div>
                     <div class="text">C'est vraiment super Alice !</div>
-                </div>
-            </div>
-            <div
-                class="conversation"
-                title="Groupe: Gael, Bob"
-                @click="
-                    openConversation('9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d')
-                "
-            >
-                <a class="avatar">
-                    <span>
-                        <i class="users icon"></i>
-                    </span>
-                </a>
-                <div class="content">
-                    <div class="metadata">
-                        <div class="title">Groupe: Gael, Bob</div>
-                        <span class="time">01:36:38</span>
-                    </div>
-                    <div class="text">Incroyable !</div>
-                </div>
-            </div>
-            <div
-                class="conversation available"
-                title="Cha"
-                @click="
-                    openConversation('9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d')
-                "
-            >
-                <a class="avatar">
-                    <img
-                        src="https://source.unsplash.com/rITj7p2KeZE/100x100"
-                    />
-                </a>
-                <div class="content">
-                    <div class="metadata">
-                        <div class="title">
-                            <i class="ui small icon circle"></i>
-                            Cha
-                        </div>
-                        <span class="time">2 jours</span>
-                    </div>
-                    <div class="text">Nouvelle conversation</div>
-                </div>
-            </div>
-            <div
-                class="conversation selected"
-                title="Derek"
-                @click="
-                    openConversation('9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d')
-                "
-            >
-                <a class="avatar">
-                    <img
-                        src="https://source.unsplash.com/FUcupae92P4/100x100"
-                    />
-                </a>
-                <div class="content">
-                    <div class="metadata">
-                        <div class="title">Derek</div>
-                        <span class="time">3 semaines</span>
-                    </div>
-                    <div class="text">Nouvelle conversation</div>
                 </div>
             </div>
         </div>
