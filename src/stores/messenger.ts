@@ -39,7 +39,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     )
 
     const currentConversation = computed(() => {
-        return null // TODO
+        return conversationsRef.value.find(conversation => conversation.id === currentConversationId.value)
     })
 
     return {

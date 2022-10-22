@@ -19,6 +19,7 @@
     background: black;
     color: white;
     margin: 0 5px;
+    cursor: pointer;
 }
 
 .avatar i {
@@ -128,9 +129,6 @@
     color: black;
     padding: 2.5px 0;
     display: flex;
-}
-
-.mine {
 }
 
 .message img {
