@@ -144,6 +144,10 @@
     color: black !important;
 }
 
+.conversation.new .avatar .icon {
+    color: white !important;
+}
+
 @media screen and (max-width: 800px) {
     .conversation .content {
         display: none;
@@ -198,7 +202,7 @@
     padding-left: 10px;
     color: #777;
     text-overflow: ellipsis;
-    width: 230px;
+    width: 160px;
     white-space: nowrap;
     overflow: hidden;
     text-align: justify;

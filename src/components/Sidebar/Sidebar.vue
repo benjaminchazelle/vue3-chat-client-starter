@@ -1,5 +1,6 @@
+<!-- eslint-disable prettier/prettier -->
 <script setup lang="ts">
-import { toRefs } from 'vue'
+import { toRefs, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Conversation } from '@/client/types/business'
 import { useAuthStore } from '@/stores/auth'
@@ -14,7 +15,9 @@ const messengerStore = useMessengerStore()
 const { user } = toRefs(authStore)
 const { logout } = authStore
 
-const { conversations } = toRefs(messengerStore)
+const { conversations, users, authenticatedUsername } = toRefs(messengerStore)
+
+const conversationSelectedId = ref("")
 
 function openCommunity() {
     router.push({ name: 'Community' })
@@ -25,8 +28,44 @@ function openMessageSearch() {
 }
 
 function openConversation(id: Conversation['id']) {
+    conversationSelectedId.value = id;
     router.push({ name: 'Conversation', params: { id } })
 }
+
+function convertStringToDate(date: string): Date {
+    return new Date(date)
+}
+
+function getProfilePicture(participants: string[]): string {
+    const username = participants.find(participant => participant !== authenticatedUsername.value)
+    const user = users.value.find(user => user.username === username)
+    if (!user) {
+        return "https://yt3.ggpht.com/JliOszS4fXEpCIs2it_vsBjwhlNWgZsboezGA7NYUtihf8F54A5I7laaj2d3zpH-io6e2fVL=s900-c-k-c0x00ffffff-no-rj"; // Mmmmmh
+    }
+
+    return user.picture_url;
+}
+
+function titleConversation(conversation: Conversation): string {
+    if (conversation.title) return conversation.title;
+
+    if (conversation.participants.length > 2) {
+        return `Groupe: ${conversation.participants.join(', ')}`
+    }
+
+    const participant = conversation.participants.find(participant => participant !== authenticatedUsername.value);
+
+    if (participant) {
+        return participant;
+    }
+
+    return 'Anonymous';
+}
+
+function sortConversations(conversations: Conversation[]): Conversation[] {
+    return conversations.sort((a, b) => ('' + b.updated_at).localeCompare(a.updated_at))
+}
+
 </script>
 
 <template>
@@ -78,89 +117,54 @@ function openConversation(id: Conversation['id']) {
                 </div>
             </div>
             <div
-                class="conversation new"
-                title="Bob"
-                @click="
-                    openConversation('9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d')
-                "
+                v-for="conversation in sortConversations(conversations)"
+                class="conversation"
+                :key="conversation.id"
+                :class="{
+                    selected: conversation.id === conversationSelectedId,
+                }"
+                :title="titleConversation(conversation)"
+                @click="openConversation(conversation.id)"
             >
                 <a class="avatar">
                     <img
-                        src="https://source.unsplash.com/7omHUGhhmZ0/100x100"
+                        v-if="conversation.participants.length < 3"
+                        :src="getProfilePicture(conversation.participants)"
                     />
-                </a>
-                <div class="content">
-                    <div class="metadata">
-                        <div class="title">
-                            <i class="ui small icon circle"></i>
-                            Bob
-                        </div>
-                        <span class="time">01:30:58</span>
-                    </div>
-                    <div class="text">C'est vraiment super Alice !</div>
-                </div>
-            </div>
-            <div
-                class="conversation"
-                title="Groupe: Gael, Bob"
-                @click="
-                    openConversation('9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d')
-                "
-            >
-                <a class="avatar">
-                    <span>
-                        <i class="users icon"></i>
+                    <span v-else data-v-73baddaf="">
+                        <i data-v-73baddaf="" class="users icon"></i>
                     </span>
                 </a>
                 <div class="content">
                     <div class="metadata">
-                        <div class="title">Groupe: Gael, Bob</div>
-                        <span class="time">01:36:38</span>
-                    </div>
-                    <div class="text">Incroyable !</div>
-                </div>
-            </div>
-            <div
-                class="conversation available"
-                title="Cha"
-                @click="
-                    openConversation('9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d')
-                "
-            >
-                <a class="avatar">
-                    <img
-                        src="https://source.unsplash.com/rITj7p2KeZE/100x100"
-                    />
-                </a>
-                <div class="content">
-                    <div class="metadata">
                         <div class="title">
                             <i class="ui small icon circle"></i>
-                            Cha
+                            {{ titleConversation(conversation) }}
                         </div>
-                        <span class="time">2 jours</span>
+                        <span class="time">
+                            {{
+                                convertStringToDate(
+                                    conversation.updated_at
+                                ).toLocaleDateString()
+                            }}
+                        </span>
                     </div>
-                    <div class="text">Nouvelle conversation</div>
-                </div>
-            </div>
-            <div
-                class="conversation selected"
-                title="Derek"
-                @click="
-                    openConversation('9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d')
-                "
-            >
-                <a class="avatar">
-                    <img
-                        src="https://source.unsplash.com/FUcupae92P4/100x100"
-                    />
-                </a>
-                <div class="content">
                     <div class="metadata">
-                        <div class="title">Derek</div>
-                        <span class="time">3 semaines</span>
+                        <div class="text">
+                            {{
+                                conversation.messages.length === 0
+                                    ? 'Nouvelle conversation'
+                                    : conversation.messages[0].content
+                            }}
+                        </div>
+                        <span class="time">
+                            {{
+                                convertStringToDate(
+                                    conversation.updated_at
+                                ).toLocaleTimeString()
+                            }}
+                        </span>
                     </div>
-                    <div class="text">Nouvelle conversation</div>
                 </div>
             </div>
         </div>
