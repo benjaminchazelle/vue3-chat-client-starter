@@ -3,6 +3,7 @@ import { onMounted, onUpdated, ref, toRefs, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import Group from '@/components/Group/Group.vue'
 import { useMessengerStore } from '@/stores/messenger'
+import type { Conversation } from '@/client/types/business'
 
 const groupPanel = ref(false)
 
@@ -10,7 +11,7 @@ const scrollElement = ref<HTMLElement | null>(null)
 
 const messengerStore = useMessengerStore()
 
-const { currentConversation } = toRefs(messengerStore)
+const { users, currentConversation, authenticatedUsername } = toRefs(messengerStore)
 
 const { setCurrentConversationId } = messengerStore
 
@@ -49,23 +50,57 @@ function scrollBottom() {
         }
     }, 0)
 }
+
+function titleConversation(conversation: Conversation): string {
+    if (conversation.title) return conversation.title
+
+    if (conversation.participants.length > 2) {
+        return `Groupe: ${conversation.participants.join(', ')}`
+    }
+
+    const participant = conversation.participants.find(
+        (participant) => participant !== authenticatedUsername.value
+    )
+
+    if (participant) {
+        return participant
+    }
+
+    return 'Anonymous'
+}
+
+function getProfilePicture(participants: string[]): string {
+    const username = participants.find(
+        (participant) => participant !== authenticatedUsername.value
+    )
+    const user = users.value.find((user) => user.username === username)
+    if (!user) {
+        return 'https://yt3.ggpht.com/JliOszS4fXEpCIs2it_vsBjwhlNWgZsboezGA7NYUtihf8F54A5I7laaj2d3zpH-io6e2fVL=s900-c-k-c0x00ffffff-no-rj' // Mmmmmh
+    }
+
+    return user.picture_url
+}
 </script>
 
 <template>
     <div class="conversation">
         <div class="conversation-header">
-            <!--      <img-->
-            <!--        class="avatar"-->
-            <!--        src="https://source.unsplash.com/FUcupae92P4/100x100"-->
-            <!--      />-->
-            <div @click="openGroupInformation" class="avatar">
-                <i class="ui users icon"></i>
-            </div>
+            <a @click="openGroupInformation">
+                <img
+                    v-if="currentConversation.participants.length < 3"
+                    :src="getProfilePicture(currentConversation.participants)"
+                    class="avatar"  
+                />
+
+                <span v-else data-v-73baddaf="">
+                    <i data-v-73baddaf="" class="avatar users icon"></i>
+                </span>
+            </a>
 
             <div class="title">
                 <div class="ui compact">
                     <i class="icon circle"></i>
-                    <span>Groupe: Alice, Bob</span>
+                    <span>{{ titleConversation(currentConversation) }}</span>
                     <div class="ui simple dropdown item">
                         <i class="vertical ellipsis icon"></i>
 
