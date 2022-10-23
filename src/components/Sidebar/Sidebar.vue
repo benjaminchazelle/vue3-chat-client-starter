@@ -1,6 +1,6 @@
 <!-- eslint-disable prettier/prettier -->
 <script setup lang="ts">
-import { toRefs, ref } from 'vue'
+import { toRefs, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Conversation } from '@/client/types/business'
 import { useAuthStore } from '@/stores/auth'
@@ -14,6 +14,8 @@ const messengerStore = useMessengerStore()
 
 const { user } = toRefs(authStore)
 const { logout } = authStore
+
+const searchInput = ref('')
 
 const { conversations, users, authenticatedUsername } = toRefs(messengerStore)
 
@@ -31,6 +33,33 @@ function openConversation(id: Conversation['id']) {
     conversationSelectedId.value = id;
     router.push({ name: 'Conversation', params: { id } })
 }
+
+const filteredConversations = computed(() => {
+    if (searchInput.value === '') return sortConversations(conversations.value)
+
+    const conversationsResult: Conversation[] = [];
+
+    conversations.value.map((conversation: Conversation) => {
+        let alreadyFounded = false;
+        for (let i = 0; i < conversation.participants.length; i++) {
+            if (conversation.participants[i].toLowerCase().includes(searchInput.value.toLowerCase())) {
+                conversationsResult.push(conversation);
+                alreadyFounded = true;
+                break;
+            }
+        }
+
+        if (!alreadyFounded) {
+            if (conversation.title) {
+                if (conversation.title.includes(searchInput.value)) {
+                    conversationsResult.push(conversation);
+                }
+            }
+        }
+    })
+
+    return sortConversations(conversationsResult)
+})
 
 function convertStringToDate(date: string): Date {
     return new Date(date)
@@ -107,30 +136,19 @@ function sortConversations(conversations: Conversation[]): Conversation[] {
             <div class="conversation-search">
                 <div class="ui fluid search">
                     <div class="ui icon input">
-                        <input
-                            class="prompt"
-                            placeholder="Rechercher une conversation"
-                            type="text"
-                        />
+                        <input class="prompt" placeholder="Rechercher une conversation" type="text"
+                            v-model="searchInput" />
                         <i class="search icon"></i>
                     </div>
                 </div>
             </div>
-            <div
-                v-for="conversation in sortConversations(conversations)"
-                class="conversation"
-                :key="conversation.id"
-                :class="{
-                    selected: conversation.id === conversationSelectedId,
-                }"
-                :title="titleConversation(conversation)"
-                @click="openConversation(conversation.id)"
-            >
+
+            <div v-for="conversation in filteredConversations" class="conversation" :key="conversation.id" :class="{
+                selected: conversation.id === conversationSelectedId,
+            }" :title="titleConversation(conversation)" @click="openConversation(conversation.id)">
                 <a class="avatar">
-                    <img
-                        v-if="conversation.participants.length < 3"
-                        :src="getProfilePicture(conversation.participants)"
-                    />
+                    <img v-if="conversation.participants.length < 3"
+                        :src="getProfilePicture(conversation.participants)" />
                     <span v-else data-v-73baddaf="">
                         <i data-v-73baddaf="" class="users icon"></i>
                     </span>
@@ -143,25 +161,25 @@ function sortConversations(conversations: Conversation[]): Conversation[] {
                         </div>
                         <span class="time">
                             {{
-                                convertStringToDate(
-                                    conversation.updated_at
-                                ).toLocaleDateString()
+                            convertStringToDate(
+                            conversation.updated_at
+                            ).toLocaleDateString()
                             }}
                         </span>
                     </div>
                     <div class="metadata">
                         <div class="text">
                             {{
-                                conversation.messages.length === 0
-                                    ? 'Nouvelle conversation'
-                                    : conversation.messages[0].content
+                            conversation.messages.length === 0
+                            ? 'Nouvelle conversation'
+                            : conversation.messages[0].content
                             }}
                         </div>
                         <span class="time">
                             {{
-                                convertStringToDate(
-                                    conversation.updated_at
-                                ).toLocaleTimeString()
+                            convertStringToDate(
+                            conversation.updated_at
+                            ).toLocaleTimeString()
                             }}
                         </span>
                     </div>
@@ -170,5 +188,7 @@ function sortConversations(conversations: Conversation[]): Conversation[] {
         </div>
     </div>
 </template>
+
+
 
 <style scoped src="./Sidebar.css" />
