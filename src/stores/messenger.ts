@@ -51,6 +51,7 @@ export const useMessengerStore = defineStore('messenger', () => {
         users,
         conversations,
         currentConversation,
+        setConversations,
         setCurrentConversationId,
         setUsers,
         upsertUser,
@@ -67,6 +68,10 @@ export const useMessengerStore = defineStore('messenger', () => {
         usersRef.value = users
     }
 
+    function setConversations(conversations: Conversation[]) {
+        conversationsRef.value = conversations
+    }
+
     function upsertUser(user: User) {
         const userIndex = usersRef.value.findIndex(
             (_user) => _user.username === user.username
@@ -80,6 +85,14 @@ export const useMessengerStore = defineStore('messenger', () => {
     }
 
     function upsertConversation(conversation: Conversation) {
-        // TODO
+        const conversationIndex = conversationsRef.value.findIndex(
+            (_conversation) => _conversation.id === conversation.id
+        )
+
+        if (conversationIndex !== -1) {
+            conversationsRef.value[conversationIndex] = { ...conversation }
+        } else {
+            conversationsRef.value.push({ ...conversation })
+        }
     }
 })

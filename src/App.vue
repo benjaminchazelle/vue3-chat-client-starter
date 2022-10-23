@@ -24,7 +24,7 @@ watch(user, (newUser, oldUser) => {
     const justAuthenticated = newUser && !oldUser
     if (justAuthenticated) {
         clientEmits.getUsers()
-        // clientEmits.getConversations()
+        clientEmits.getConversations()
     }
 })
 
