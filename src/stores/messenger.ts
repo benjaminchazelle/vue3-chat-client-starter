@@ -85,6 +85,14 @@ export const useMessengerStore = defineStore('messenger', () => {
     }
 
     function upsertConversation(conversation: Conversation) {
-        // TODO
+        const conversationIndex = conversationsRef.value.findIndex(
+            (_conversation) => _conversation.id === conversation.id
+        )
+
+        if (conversationIndex !== -1) {
+            conversationsRef.value[conversationIndex] = { ...conversation }
+        } else {
+            conversationsRef.value.push({ ...conversation })
+        }
     }
 })

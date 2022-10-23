@@ -1,3 +1,4 @@
+<!-- eslint-disable prettier/prettier -->
 <script setup lang="ts">
 import { toRefs, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
@@ -16,7 +17,9 @@ const { logout } = authStore
 
 const searchInput = ref('')
 
-const { conversations } = toRefs(messengerStore)
+const { conversations, users, authenticatedUsername } = toRefs(messengerStore)
+
+const conversationSelectedId = ref("")
 
 function openCommunity() {
     router.push({ name: 'Community' })
@@ -27,16 +30,71 @@ function openMessageSearch() {
 }
 
 function openConversation(id: Conversation['id']) {
+    conversationSelectedId.value = id;
     router.push({ name: 'Conversation', params: { id } })
 }
 
-const filteredConversations = computed(() =>
-    conversations.value.filter((conversation) => {
-        return conversation.title
-            .toLowerCase()
-            .includes(searchInput.value.toLowerCase())
+const filteredConversations = computed(() => {
+    if (searchInput.value === '') return sortConversations(conversations.value)
+
+    const conversationsResult: Conversation[] = [];
+
+    conversations.value.map((conversation: Conversation) => {
+        let alreadyFounded = false;
+        for (let i = 0; i < conversation.participants.length; i++) {
+            if (conversation.participants[i].toLowerCase().includes(searchInput.value.toLowerCase())) {
+                conversationsResult.push(conversation);
+                alreadyFounded = true;
+                break;
+            }
+        }
+
+        if (!alreadyFounded) {
+            if (conversation.title) {
+                if (conversation.title.includes(searchInput.value)) {
+                    conversationsResult.push(conversation);
+                }
+            }
+        }
     })
-)
+
+    return sortConversations(conversationsResult)
+})
+
+function convertStringToDate(date: string): Date {
+    return new Date(date)
+}
+
+function getProfilePicture(participants: string[]): string {
+    const username = participants.find(participant => participant !== authenticatedUsername.value)
+    const user = users.value.find(user => user.username === username)
+    if (!user) {
+        return "https://yt3.ggpht.com/JliOszS4fXEpCIs2it_vsBjwhlNWgZsboezGA7NYUtihf8F54A5I7laaj2d3zpH-io6e2fVL=s900-c-k-c0x00ffffff-no-rj"; // Mmmmmh
+    }
+
+    return user.picture_url;
+}
+
+function titleConversation(conversation: Conversation): string {
+    if (conversation.title) return conversation.title;
+
+    if (conversation.participants.length > 2) {
+        return `Groupe: ${conversation.participants.join(', ')}`
+    }
+
+    const participant = conversation.participants.find(participant => participant !== authenticatedUsername.value);
+
+    if (participant) {
+        return participant;
+    }
+
+    return 'Anonymous';
+}
+
+function sortConversations(conversations: Conversation[]): Conversation[] {
+    return conversations.sort((a, b) => ('' + b.updated_at).localeCompare(a.updated_at))
+}
+
 </script>
 
 <template>
@@ -78,43 +136,59 @@ const filteredConversations = computed(() =>
             <div class="conversation-search">
                 <div class="ui fluid search">
                     <div class="ui icon input">
-                        <input
-                            class="prompt"
-                            placeholder="Rechercher une conversation"
-                            type="text"
-                            v-model="searchInput"
-                        />
+                        <input class="prompt" placeholder="Rechercher une conversation" type="text"
+                            v-model="searchInput" />
                         <i class="search icon"></i>
                     </div>
                 </div>
             </div>
 
-            <div
-                class="conversation"
-                v-for="conversation in filteredConversations"
-                :key="conversation.id"
-                :title="conversation.title"
-                @click="openConversation(conversation.id)"
-                :class="{}"
-            >
+            <div v-for="conversation in filteredConversations" class="conversation" :key="conversation.id" :class="{
+                selected: conversation.id === conversationSelectedId,
+            }" :title="titleConversation(conversation)" @click="openConversation(conversation.id)">
                 <a class="avatar">
-                    <img
-                        src="https://source.unsplash.com/7omHUGhhmZ0/100x100"
-                    />
+                    <img v-if="conversation.participants.length < 3"
+                        :src="getProfilePicture(conversation.participants)" />
+                    <span v-else data-v-73baddaf="">
+                        <i data-v-73baddaf="" class="users icon"></i>
+                    </span>
                 </a>
                 <div class="content">
                     <div class="metadata">
                         <div class="title">
                             <i class="ui small icon circle"></i>
-                            {{ conversation.title }}
+                            {{ titleConversation(conversation) }}
                         </div>
-                        <span class="time">{{ conversation.updated_at }}</span>
+                        <span class="time">
+                            {{
+                            convertStringToDate(
+                            conversation.updated_at
+                            ).toLocaleDateString()
+                            }}
+                        </span>
                     </div>
-                    <div class="text">C'est vraiment super Alice !</div>
+                    <div class="metadata">
+                        <div class="text">
+                            {{
+                            conversation.messages.length === 0
+                            ? 'Nouvelle conversation'
+                            : conversation.messages[0].content
+                            }}
+                        </div>
+                        <span class="time">
+                            {{
+                            convertStringToDate(
+                            conversation.updated_at
+                            ).toLocaleTimeString()
+                            }}
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </template>
+
+
 
 <style scoped src="./Sidebar.css" />
