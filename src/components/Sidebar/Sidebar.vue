@@ -19,7 +19,7 @@ const searchInput = ref('')
 
 const { conversations, users, authenticatedUsername } = toRefs(messengerStore)
 
-const conversationSelectedId = ref("")
+const conversationSelectedId = ref('')
 
 function openCommunity() {
     router.push({ name: 'Community' })
@@ -30,29 +30,33 @@ function openMessageSearch() {
 }
 
 function openConversation(id: Conversation['id']) {
-    conversationSelectedId.value = id;
+    conversationSelectedId.value = id
     router.push({ name: 'Conversation', params: { id } })
 }
 
 const filteredConversations = computed(() => {
     if (searchInput.value === '') return sortConversations(conversations.value)
 
-    const conversationsResult: Conversation[] = [];
+    const conversationsResult: Conversation[] = []
 
     conversations.value.map((conversation: Conversation) => {
-        let alreadyFounded = false;
+        let alreadyFounded = false
         for (let i = 0; i < conversation.participants.length; i++) {
-            if (conversation.participants[i].toLowerCase().includes(searchInput.value.toLowerCase())) {
-                conversationsResult.push(conversation);
-                alreadyFounded = true;
-                break;
+            if (
+                conversation.participants[i]
+                    .toLowerCase()
+                    .includes(searchInput.value.toLowerCase())
+            ) {
+                conversationsResult.push(conversation)
+                alreadyFounded = true
+                break
             }
         }
 
         if (!alreadyFounded) {
             if (conversation.title) {
                 if (conversation.title.includes(searchInput.value)) {
-                    conversationsResult.push(conversation);
+                    conversationsResult.push(conversation)
                 }
             }
         }
@@ -66,35 +70,40 @@ function convertStringToDate(date: string): Date {
 }
 
 function getProfilePicture(participants: string[]): string {
-    const username = participants.find(participant => participant !== authenticatedUsername.value)
-    const user = users.value.find(user => user.username === username)
+    const username = participants.find(
+        (participant) => participant !== authenticatedUsername.value
+    )
+    const user = users.value.find((user) => user.username === username)
     if (!user) {
-        return "https://yt3.ggpht.com/JliOszS4fXEpCIs2it_vsBjwhlNWgZsboezGA7NYUtihf8F54A5I7laaj2d3zpH-io6e2fVL=s900-c-k-c0x00ffffff-no-rj"; // Mmmmmh
+        return 'https://yt3.ggpht.com/JliOszS4fXEpCIs2it_vsBjwhlNWgZsboezGA7NYUtihf8F54A5I7laaj2d3zpH-io6e2fVL=s900-c-k-c0x00ffffff-no-rj' // Mmmmmh
     }
 
-    return user.picture_url;
+    return user.picture_url
 }
 
 function titleConversation(conversation: Conversation): string {
-    if (conversation.title) return conversation.title;
+    if (conversation.title) return conversation.title
 
     if (conversation.participants.length > 2) {
         return `Groupe: ${conversation.participants.join(', ')}`
     }
 
-    const participant = conversation.participants.find(participant => participant !== authenticatedUsername.value);
+    const participant = conversation.participants.find(
+        (participant) => participant !== authenticatedUsername.value
+    )
 
     if (participant) {
-        return participant;
+        return participant
     }
 
-    return 'Anonymous';
+    return 'Anonymous'
 }
 
 function sortConversations(conversations: Conversation[]): Conversation[] {
-    return conversations.sort((a, b) => ('' + b.updated_at).localeCompare(a.updated_at))
+    return conversations.sort((a, b) =>
+        ('' + b.updated_at).localeCompare(a.updated_at)
+    )
 }
-
 </script>
 
 <template>
@@ -136,19 +145,32 @@ function sortConversations(conversations: Conversation[]): Conversation[] {
             <div class="conversation-search">
                 <div class="ui fluid search">
                     <div class="ui icon input">
-                        <input class="prompt" placeholder="Rechercher une conversation" type="text"
-                            v-model="searchInput" />
+                        <input
+                            class="prompt"
+                            placeholder="Rechercher une conversation"
+                            type="text"
+                            v-model="searchInput"
+                        />
                         <i class="search icon"></i>
                     </div>
                 </div>
             </div>
 
-            <div v-for="conversation in filteredConversations" class="conversation" :key="conversation.id" :class="{
-                selected: conversation.id === conversationSelectedId,
-            }" :title="titleConversation(conversation)" @click="openConversation(conversation.id)">
+            <div
+                v-for="conversation in filteredConversations"
+                class="conversation"
+                :key="conversation.id"
+                :class="{
+                    selected: conversation.id === conversationSelectedId,
+                }"
+                :title="titleConversation(conversation)"
+                @click="openConversation(conversation.id)"
+            >
                 <a class="avatar">
-                    <img v-if="conversation.participants.length < 3"
-                        :src="getProfilePicture(conversation.participants)" />
+                    <img
+                        v-if="conversation.participants.length < 3"
+                        :src="getProfilePicture(conversation.participants)"
+                    />
                     <span v-else data-v-73baddaf="">
                         <i data-v-73baddaf="" class="users icon"></i>
                     </span>
@@ -161,25 +183,25 @@ function sortConversations(conversations: Conversation[]): Conversation[] {
                         </div>
                         <span class="time">
                             {{
-                            convertStringToDate(
-                            conversation.updated_at
-                            ).toLocaleDateString()
+                                convertStringToDate(
+                                    conversation.updated_at
+                                ).toLocaleDateString()
                             }}
                         </span>
                     </div>
                     <div class="metadata">
                         <div class="text">
                             {{
-                            conversation.messages.length === 0
-                            ? 'Nouvelle conversation'
-                            : conversation.messages[0].content
+                                conversation.messages.length === 0
+                                    ? 'Nouvelle conversation'
+                                    : conversation.messages[0].content
                             }}
                         </div>
                         <span class="time">
                             {{
-                            convertStringToDate(
-                            conversation.updated_at
-                            ).toLocaleTimeString()
+                                convertStringToDate(
+                                    conversation.updated_at
+                                ).toLocaleTimeString()
                             }}
                         </span>
                     </div>
@@ -188,7 +210,5 @@ function sortConversations(conversations: Conversation[]): Conversation[] {
         </div>
     </div>
 </template>
-
-
 
 <style scoped src="./Sidebar.css" />
