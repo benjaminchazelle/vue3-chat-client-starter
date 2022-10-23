@@ -25,10 +25,11 @@ export function useHighLevelClientEmits() {
         },
 
         async getConversations() {
-            const { conversations } = await chatClient.emit<GetConversationsEmit>(
-                '@getConversations',
-                {}
-            )
+            const { conversations } =
+                await chatClient.emit<GetConversationsEmit>(
+                    '@getConversations',
+                    {}
+                )
             messengerStore.setConversations(conversations)
         },
 
