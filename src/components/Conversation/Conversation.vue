@@ -33,17 +33,6 @@ setCurrentConversationId(conversationId)
 
 async function sendMessage(){
     console.log(inputSentMessage);
-    /*export interface PostMessageEmit extends Emit {
-        event: '@postMessage'
-        authenticated: true
-        payload: {
-            conversation_id: string
-            content: string
-        }
-        response: {
-            message: Message
-        }
-    }*/
     let sentMessage = inputSentMessage
     await client.emit('@postMessage',{conversation_id : conversationId, content : inputSentMessage});
 }
