@@ -51,7 +51,7 @@ export function listenHighLevelClientEvents() {
     chatClient.on<MessagePostedEvent>(
         '@messagePosted',
         async ({ conversation_id, message }) => {
-            //TODO
+            messengerStore.upsertMessageConversation(conversation_id, message)
         }
     )
 
