@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed, toRefs } from 'vue'
-import type { Conversation, User } from '@/client/types/business'
+import type { Conversation, Message, User } from '@/client/types/business'
 import { useAuthStore } from '@/stores/auth'
 
 export const useMessengerStore = defineStore('messenger', () => {
@@ -56,6 +56,7 @@ export const useMessengerStore = defineStore('messenger', () => {
         setUsers,
         upsertUser,
         upsertConversation,
+        upsertMessageConversation,
     }
 
     // Actions
@@ -93,6 +94,21 @@ export const useMessengerStore = defineStore('messenger', () => {
             conversationsRef.value[conversationIndex] = { ...conversation }
         } else {
             conversationsRef.value.push({ ...conversation })
+        }
+    }
+
+    function upsertMessageConversation(
+        conversationId: string,
+        message: Message
+    ) {
+        const conversationIndex = conversationsRef.value.findIndex(
+            (_conversation) => _conversation.id === conversationId
+        )
+
+        if (conversationIndex !== -1) {
+            conversationsRef.value[conversationIndex].messages.push({
+                ...message,
+            })
         }
     }
 })
