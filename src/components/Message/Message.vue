@@ -1,21 +1,26 @@
 <script setup lang="ts">
-import { toRefs } from 'vue'
+import { ref, toRefs } from 'vue'
 import reacts from '@/assets/reacts.json'
 import type { Message } from '@/client/types/business'
 import { useAuthStore } from '@/stores/auth'
 
-const props = defineProps<Message>()
+const ps = defineProps<{
+    message: Message
+    urlIcon: string
+}>()
+
+const props = ref(ps)
 
 const authStore = useAuthStore()
 const { user } = toRefs(authStore)
 
 console.log(user)
-console.log(props)
+console.log(props.value)
 </script>
 
 <template>
-    <div v-if="user?.username === props.from" class="message mine">
-        <div class="bubble top bottom">Hello les amis !</div>
+    <div v-if="user?.username === props.message.from" class="message mine">
+        <div class="bubble top bottom">{{ props.message.content }}</div>
         <div class="reacts"></div>
         <div class="controls">
             <i title="Supprimer" class="circular trash icon"></i>
@@ -25,16 +30,16 @@ console.log(props)
     </div>
     <div v-else class="message">
         <img
-            :title="props.from"
-            src="https://source.unsplash.com/7omHUGhhmZ0/100x100"
-            :alt="props.from"
+            :title="props.message.from"
+            :src="props.urlIcon"
+            :alt="props.message.from"
         />
-        <div class="bubble top bottom">{{ props.content }}</div>
+        <div class="bubble top bottom">{{ props.message.content }}</div>
         <div class="reacts">
-            <span class="circular icon">
+            <!-- <span class="circular icon">
                 1
                 <i title="Aimer" class="heart outline icon"></i>
-            </span>
+            </span> -->
         </div>
         <div class="controls">
             <i title="Répondre" class="circular reply icon"></i>
@@ -50,3 +55,5 @@ console.log(props)
         </div>
     </div>
 </template>
+
+<style scoped src="./Message.css" />
