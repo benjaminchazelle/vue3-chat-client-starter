@@ -4,6 +4,7 @@ import { useRouter, useRoute } from 'vue-router'
 import type { Conversation } from '@/client/types/business'
 import { client } from '@/client/useLowLevelClient'
 import Group from '@/components/Group/Group.vue'
+import Message from '@/components/Message/Message.vue'
 import { useMessengerStore } from '@/stores/messenger'
 
 const groupPanel = ref(false)
@@ -20,7 +21,7 @@ const { setCurrentConversationId } = messengerStore
 const router = useRouter()
 const route = useRoute()
 
-const inputSentMessage = ref();
+const inputSentMessage = ref()
 
 const conversationId = Array.isArray(route.params.id)
     ? route.params.id[0]
@@ -29,7 +30,10 @@ const conversationId = Array.isArray(route.params.id)
 setCurrentConversationId(conversationId)
 
 async function sendMessage() {
-    await client.emit('@postMessage',{conversation_id : conversationId, content : inputSentMessage})
+    await client.emit('@postMessage', {
+        conversation_id: conversationId,
+        content: inputSentMessage,
+    })
 }
 
 function openGroupInformation() {
@@ -95,14 +99,9 @@ function getProfilePicture(participants: string[] | string): string {
     return user.picture_url
 }
 
-function checkUser(user: string): boolean {
-    return user === authenticatedUsername.value ? true : false
-}
-
 function convertStringToDate(date: string): Date {
     return new Date(date)
 }
-
 </script>
 
 <template>
@@ -110,9 +109,13 @@ function convertStringToDate(date: string): Date {
         <div class="conversation-header">
             <a @click="openGroupInformation">
                 <img
-                    v-if="currentConversation.participants.length < 3"
+                    v-if="
+                        currentConversation &&
+                        currentConversation.participants.length < 3
+                    "
                     :src="getProfilePicture(currentConversation.participants)"
                     class="avatar"
+                    alt="Group photo"
                 />
 
                 <span v-else data-v-73baddaf="">
@@ -123,7 +126,9 @@ function convertStringToDate(date: string): Date {
             <div class="title">
                 <div class="ui compact">
                     <i class="icon circle"></i>
-                    <span>{{ titleConversation(currentConversation) }}</span>
+                    <span v-if="currentConversation">
+                        {{ titleConversation(currentConversation) }}
+                    </span>
                     <div class="ui simple dropdown item">
                         <i class="vertical ellipsis icon"></i>
 
@@ -160,7 +165,7 @@ function convertStringToDate(date: string): Date {
                     <div class="wrapper">
                         <div
                             class="message-container"
-                            v-for="message in currentConversation.messages"
+                            v-for="message in currentConversation?.messages"
                             :key="message.id"
                         >
                             <div class="time">
@@ -170,58 +175,10 @@ function convertStringToDate(date: string): Date {
                                     ).toLocaleTimeString()
                                 }}
                             </div>
-                            <div
-                                class="message"
-                                :class="{ mine: checkUser(message.from) }"
-                            >
-                                <img
-                                    v-if="!checkUser(message.from)"
-                                    :title="message.from"
-                                    :src="getProfilePicture(message.from)"
-                                    :alt="message.from"
-                                />
-                                <div class="bubble top bottom">
-                                    {{ message.content }}
-                                </div>
-                                <div class="reacts"></div>
-                                <div class="controls">
-                                    <i
-                                        v-if="checkUser(message.from)"
-                                        title="Supprimer"
-                                        class="circular trash icon"
-                                    ></i>
-                                    <i
-                                        v-if="checkUser(message.from)"
-                                        title="Editer"
-                                        class="circular edit icon"
-                                    ></i>
-                                    <i
-                                        title="Répondre"
-                                        class="circular reply icon"
-                                    ></i>
-                                    <span
-                                        class="react"
-                                        v-if="!checkUser(message.from)"
-                                    >
-                                        <i
-                                            title="Aimer"
-                                            class="circular heart outline icon"
-                                        ></i>
-                                        <i
-                                            title="Pouce en l'air"
-                                            class="circular thumbs up outline icon"
-                                        ></i>
-                                        <i
-                                            title="Content"
-                                            class="circular smile outline icon"
-                                        ></i>
-                                        <i
-                                            title="Pas content"
-                                            class="circular frown outline icon"
-                                        ></i>
-                                    </span>
-                                </div>
-                            </div>
+                            <Message
+                                :message="message"
+                                :url-icon="getProfilePicture(message.from)"
+                            />
                         </div>
                     </div>
                 </div>
