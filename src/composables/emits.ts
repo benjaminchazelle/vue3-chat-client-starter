@@ -27,7 +27,6 @@ export function useHighLevelClientEmits() {
 
         async postMessage(converastionId:string, message:string){
             
-
             await chatClient.emit<PostMessageEmit>('@postMessage',{conversation_id: converastionId, content:String(message)});
 
         },

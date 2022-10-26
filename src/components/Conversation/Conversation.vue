@@ -32,7 +32,6 @@ const conversationId = Array.isArray(route.params.id)
 setCurrentConversationId(conversationId)
 
 async function sendMessage() {
-    //await client.emit('@postMessage',{conversation_id : conversationId, content : inputSentMessage})
     
     let temp = inputSentMessage.value;
     await clientEmits.postMessage(conversationId, String(temp) );
