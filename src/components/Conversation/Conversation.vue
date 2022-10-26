@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUpdated, ref, toRefs, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import type { Conversation } from '@/client/types/business'
 import { client } from '@/client/useLowLevelClient'
 import Group from '@/components/Group/Group.vue'
@@ -15,27 +15,21 @@ const messengerStore = useMessengerStore()
 const { users, currentConversation, authenticatedUsername } =
     toRefs(messengerStore)
 
-const { setCurrentConversationId } = messengerStore
-
 const router = useRouter()
-const route = useRoute()
 
-const inputSentMessage = ref();
-
-const conversationId = Array.isArray(route.params.id)
-    ? route.params.id[0]
-    : route.params.id
-
-setCurrentConversationId(conversationId)
+const inputSentMessage = ref()
 
 async function sendMessage() {
-    await client.emit('@postMessage',{conversation_id : conversationId, content : inputSentMessage})
+    await client.emit('@postMessage', {
+        conversation_id: currentConversation.value.id,
+        content: inputSentMessage,
+    })
 }
 
 function openGroupInformation() {
     router.push({
         name: 'GroupInformation',
-        params: { id: conversationId },
+        params: { id: currentConversation.value.id },
     })
 }
 
@@ -102,7 +96,6 @@ function checkUser(user: string): boolean {
 function convertStringToDate(date: string): Date {
     return new Date(date)
 }
-
 </script>
 
 <template>
