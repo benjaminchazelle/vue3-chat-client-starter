@@ -11,6 +11,11 @@ const members = computed(() =>
 		currentConversation.value?.participants.includes(user.username)
 	)
 )
+const community = computed(() =>
+	users.value.filter(
+		(user) => !currentConversation.value?.participants.includes(user.username)
+	)
+)
 const search = ref('')
 </script>
 
@@ -48,24 +53,9 @@ const search = ref('')
 			<span>Communauté</span>
 			<hr />
 		</div>
-		<div class="user">
-			<img src="https://source.unsplash.com/8wbxjJBrl3k/100x100" />
-			<span>Cha</span>
-			<i title="Ajouter à la conversation" class="circular plus icon link"></i>
-		</div>
-		<div class="user">
-			<img src="https://source.unsplash.com/4U1x6459Q-s/100x100" />
-			<span>Emilio</span>
-			<i title="Ajouter à la conversation" class="circular plus icon link"></i>
-		</div>
-		<div class="user">
-			<img src="https://source.unsplash.com/3402kvtHhOo/100x100" />
-			<span>Fabrice</span>
-			<i title="Ajouter à la conversation" class="circular plus icon link"></i>
-		</div>
-		<div class="user">
-			<img src="https://source.unsplash.com/tNCH0sKSZbA/100x100" />
-			<span>Benji</span>
+		<div class="user" v-for="member of community" :key="member.username">
+			<img :src="member.picture_url" :alt="`Photo de ${member.username}`" />
+			<span>{{ member.username }}</span>
 			<i title="Ajouter à la conversation" class="circular plus icon link"></i>
 		</div>
 	</div>
