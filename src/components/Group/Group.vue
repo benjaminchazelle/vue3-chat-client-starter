@@ -1,6 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, toRefs, computed } from 'vue'
+import { useMessengerStore } from '@/stores/messenger'
 
+const messengerStore = useMessengerStore()
+
+const { users, currentConversation } = toRefs(messengerStore)
+
+const members = computed(() =>
+	users.value.filter((user) =>
+		currentConversation.value?.participants.includes(user.username)
+	)
+)
 const search = ref('')
 </script>
 
@@ -20,48 +30,10 @@ const search = ref('')
 			<span>Participants</span>
 			<hr />
 		</div>
-		<div class="user">
-			<img src="https://source.unsplash.com/mK_sjD0FrXw/100x100" />
+		<div class="user" v-for="member of members" :key="member.username">
+			<img :src="member.picture_url" :alt="`Photo de ${member.username}`" />
 			<span>
-				Alice
-				<br />
-				<i class="nickname"></i>
-			</span>
-			<i title="Modifier le surnom" class="circular quote left link icon"></i>
-			<i
-				title="Enlever de la conversation"
-				class="circular times icon link"
-				style=""></i>
-		</div>
-		<div class="user">
-			<img src="https://source.unsplash.com/7omHUGhhmZ0/100x100" />
-			<span>
-				Bob
-				<br />
-				<i class="nickname"></i>
-			</span>
-			<i title="Modifier le surnom" class="circular quote left link icon"></i>
-			<i
-				title="Enlever de la conversation"
-				class="circular times icon link"
-				style=""></i>
-		</div>
-		<div class="user">
-			<img src="https://source.unsplash.com/FUcupae92P4/100x100" />
-			<span>
-				Derek
-				<br />
-				<i class="nickname"></i>
-			</span>
-			<i title="Modifier le surnom" class="circular quote left link icon"></i>
-			<i
-				title="Enlever de la conversation"
-				class="circular times icon link"></i>
-		</div>
-		<div class="user">
-			<img src="https://source.unsplash.com/OYH7rc2a3LA/100x100" />
-			<span>
-				Gael
+				{{ member.username }}
 				<br />
 				<i class="nickname"></i>
 			</span>
