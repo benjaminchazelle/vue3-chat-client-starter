@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUpdated, ref, toRefs, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import type { Conversation } from '@/client/types/business'
-//import { client } from '@/client/useLowLevelClient'
 import Group from '@/components/Group/Group.vue'
 import Message from '@/components/Message/Message.vue'
 import { useHighLevelClientEmits } from '@/composables/emits'
@@ -19,18 +18,9 @@ const messengerStore = useMessengerStore()
 const { users, currentConversation, authenticatedUsername } =
     toRefs(messengerStore)
 
-const { setCurrentConversationId } = messengerStore
-
 const router = useRouter()
-const route = useRoute()
 
 const inputSentMessage = ref('')
-
-const conversationId = Array.isArray(route.params.id)
-    ? route.params.id[0]
-    : route.params.id
-
-setCurrentConversationId(conversationId)
 
 async function sendMessage() {
     const temp = inputSentMessage.value
@@ -41,7 +31,7 @@ async function sendMessage() {
 function openGroupInformation() {
     router.push({
         name: 'GroupInformation',
-        params: { id: conversationId },
+        params: { id: currentConversation.value.id },
     })
 }
 

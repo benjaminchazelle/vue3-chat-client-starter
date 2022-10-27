@@ -33,7 +33,7 @@ authStore.login()
 router.beforeEach((to, from, next) => {
     let conversationId: string | null = null
 
-    if (to.name === 'Conversation') {
+    if (to.name === 'Conversation' || to.name === 'GroupInformation') {
         conversationId = Array.isArray(to.params.id)
             ? to.params.id[0]
             : to.params.id
