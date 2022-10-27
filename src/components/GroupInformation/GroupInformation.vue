@@ -5,7 +5,7 @@ import { useMessengerStore } from '@/stores/messenger'
 const messengerStore = useMessengerStore()
 
 const { authenticatedUsername, currentConversation, users } =
-    toRefs(messengerStore)
+	toRefs(messengerStore)
 
 const conversation = currentConversation.value
 
@@ -14,94 +14,93 @@ if (!conversation) throw new Error('CurrentConversation is undefined')
 const date = new Date(conversation.updated_at)
 
 const participants: {
-    name: string
-    nickname: string | undefined
-    numberOfMessages: number
-    seen: -1 | { message_id: string; time: string }
+	name: string
+	nickname: string | undefined
+	numberOfMessages: number
+	seen: -1 | { message_id: string; time: string }
 }[] = conversation.participants.map((participant: string) => {
-    let nickname: string = '-'
-    let seen: -1 | { message_id: string; time: string } = -1
-    let numberOfMessages: number = 0
+	let nickname: string = '-'
+	let seen: -1 | { message_id: string; time: string } = -1
+	let numberOfMessages: number = 0
 
-    if (conversation.nicknames[participant])
-        nickname = conversation.nicknames[participant]
-    if (conversation.seen[participant]) {
-        seen = conversation.seen[participant]
-    }
+	if (conversation.nicknames[participant])
+		nickname = conversation.nicknames[participant]
+	if (conversation.seen[participant]) {
+		seen = conversation.seen[participant]
+	}
 
-    if (conversation.messages.find((message) => message.from === participant)) {
-        numberOfMessages = conversation.messages.filter(
-            (message) => message.from === participant
-        ).length
-    }
+	if (conversation.messages.find((message) => message.from === participant)) {
+		numberOfMessages = conversation.messages.filter(
+			(message) => message.from === participant
+		).length
+	}
 
-    return {
-        name: participant,
-        nickname: nickname,
-        numberOfMessages: numberOfMessages,
-        seen: seen,
-    }
+	return {
+		name: participant,
+		nickname: nickname,
+		numberOfMessages: numberOfMessages,
+		seen: seen,
+	}
 })
 
 function convertStringToDate(date: string): Date {
-    return new Date(date)
+	return new Date(date)
 }
 
 function getProfilePicture(participants: string[]): string {
-    const username = participants.find(
-        (participant) => participant !== authenticatedUsername.value
-    )
-    const user = users.value.find((user) => user.username === username)
-    if (!user) {
-        return 'https://yt3.ggpht.com/JliOszS4fXEpCIs2it_vsBjwhlNWgZsboezGA7NYUtihf8F54A5I7laaj2d3zpH-io6e2fVL=s900-c-k-c0x00ffffff-no-rj' // Mmmmmh
-    }
+	const username = participants.find(
+		(participant) => participant !== authenticatedUsername.value
+	)
+	const user = users.value.find((user) => user.username === username)
+	if (!user) {
+		return 'https://yt3.ggpht.com/JliOszS4fXEpCIs2it_vsBjwhlNWgZsboezGA7NYUtihf8F54A5I7laaj2d3zpH-io6e2fVL=s900-c-k-c0x00ffffff-no-rj' // Mmmmmh
+	}
 
-    return user.picture_url
+	return user.picture_url
 }
 </script>
 
 <template>
-    <div class="group-information">
-        <div class="group-information-header">
-            <img
-                v-if="conversation.participants.length < 3"
-                :src="getProfilePicture(conversation.participants)"
-                class="avatar"
-            />
-            <span v-else>
-                <i class="avatar users icon"></i>
-            </span>
-            <h1>{{ conversation.title }}</h1>
-        </div>
+	<div class="group-information">
+		<div class="group-information-header">
+			<img
+				v-if="conversation.participants.length < 3"
+				:src="getProfilePicture(conversation.participants)"
+				class="avatar" />
+			<span v-else>
+				<i class="avatar users icon"></i>
+			</span>
+			<h1>{{ conversation.title }}</h1>
+		</div>
 
-        <div class="group-information-container">
-            <p>Last message on {{ date.toLocaleDateString() }}</p>
-            <h2>Participants</h2>
+		<div class="group-information-container">
+			<p>Last message on {{ date.toLocaleDateString() }}</p>
+			<h2>Participants</h2>
 
-            <table>
-                <tr>
-                    <th>Name</th>
-                    <th>Nickname</th>
-                    <th>Date of last message</th>
-                    <th>Number of messages</th>
-                </tr>
-                <tr v-for="participant in participants" :key="participant.name">
-                    <td>{{ participant.name }}</td>
-                    <td>{{ participant.nickname }}</td>
-                    <td>
-                        {{
-                            participant.seen === -1
-                                ? '-'
-                                : `${convertStringToDate(
-                                      participant.seen.time
-                                  ).toLocaleString()}`
-                        }}
-                    </td>
-                    <td>{{ participant.numberOfMessages }}</td>
-                </tr>
-            </table>
-        </div>
-    </div>
+			<table>
+				<tr>
+					<th>Name</th>
+					<th>Nickname</th>
+					<th>Date of last message</th>
+					<th>Number of messages</th>
+				</tr>
+				<tr v-for="participant in participants" :key="participant.name">
+					<td>{{ participant.name }}</td>
+					<td>{{ participant.nickname }}</td>
+					<td>
+						{{
+							participant.seen === -1
+								? '-'
+								: `${convertStringToDate(
+										participant.seen.time
+								  ).toLocaleString()}`
+						}}
+					</td>
+					<td>{{ participant.numberOfMessages }}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
 </template>
 
 <style scoped src="./GroupInformation.css" />

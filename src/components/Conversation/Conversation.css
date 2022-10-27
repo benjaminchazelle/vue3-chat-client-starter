@@ -1,144 +1,144 @@
 .conversation-header {
-    text-align: center;
-    padding: 10px;
-    width: 100%;
-    border-bottom: 1px solid #dedede;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	text-align: center;
+	padding: 10px;
+	width: 100%;
+	border-bottom: 1px solid #dedede;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .conversation-header .avatar {
-    width: 75px;
-    height: 75px;
-    line-height: 75px;
-    text-align: center;
-    font-size: 35px;
-    font-weight: bold;
-    border-radius: 50px;
-    background: black;
-    color: white;
-    margin: 0 5px;
-    cursor: pointer;
+	width: 75px;
+	height: 75px;
+	line-height: 75px;
+	text-align: center;
+	font-size: 35px;
+	font-weight: bold;
+	border-radius: 50px;
+	background: black;
+	color: white;
+	margin: 0 5px;
+	cursor: pointer;
 }
 
 .avatar i {
-    margin: 0;
+	margin: 0;
 }
 
 .conversation-header .title span {
-    font-weight: bold;
-    font-size: 20px;
+	font-weight: bold;
+	font-size: 20px;
 }
 
 .conversation-header .title .circle {
-    color: #42b72a;
-    vertical-align: text-top;
+	color: #42b72a;
+	vertical-align: text-top;
 }
 
 .conversation-header .title .vertical.ellipsis.icon {
-    margin: 0 5px;
-    vertical-align: text-top;
+	margin: 0 5px;
+	vertical-align: text-top;
 }
 
 .conversation-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
 }
 
 .conversation-container {
-    display: flex;
-    width: 100%;
-    flex: 1;
+	display: flex;
+	width: 100%;
+	flex: 1;
 }
 
 .conversation-sidebar {
-    width: 300px;
-    border-left: 1px solid #dedede;
-    display: flex;
-    flex-direction: column;
+	width: 300px;
+	border-left: 1px solid #dedede;
+	display: flex;
+	flex-direction: column;
 }
 
 .conversation-body {
-    background: white;
-    flex: 1 1 auto;
-    height: 0;
-    overflow-y: auto;
+	background: white;
+	flex: 1 1 auto;
+	height: 0;
+	overflow-y: auto;
 }
 
 .conversation-body .wrapper {
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 10px 30px;
+	max-width: 1200px;
+	width: 100%;
+	margin: 0 auto;
+	padding: 10px 30px;
 }
 
 .typing {
-    font-weight: bold;
-    font-style: italic;
-    color: #999999;
-    text-align: center;
+	font-weight: bold;
+	font-style: italic;
+	color: #999999;
+	text-align: center;
 }
 
 .typing .wrapper {
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 10px 30px;
+	max-width: 1200px;
+	width: 100%;
+	margin: 0 auto;
+	padding: 10px 30px;
 }
 
 .conversation-footer {
-    border-top: 1px solid #dedede;
+	border-top: 1px solid #dedede;
 }
 
 .transiting {
-    opacity: 0.5;
+	opacity: 0.5;
 }
 
 .conversation-footer .wrapper {
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 10px 30px;
+	max-width: 1200px;
+	width: 100%;
+	margin: 0 auto;
+	padding: 10px 30px;
 }
 
 .conversation-footer p {
-    padding: 0 15px 5px;
-    margin: 0;
-    font-weight: bold;
+	padding: 0 15px 5px;
+	margin: 0;
+	font-weight: bold;
 }
 
 .conversation-footer span {
-    font-weight: normal;
-    font-style: italic;
+	font-weight: normal;
+	font-style: italic;
 }
 
 .conversation {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
 }
 
 .time {
-    text-align: center;
+	text-align: center;
 }
 
 .view {
-    text-align: center;
+	text-align: center;
 }
 
 .view img {
-    width: 16px;
-    height: 16px;
-    border-radius: 8px;
-    margin: 0 4px;
+	width: 16px;
+	height: 16px;
+	border-radius: 8px;
+	margin: 0 4px;
 }
 
 .reply_content {
-    background: rgba(255, 255, 255, 0.25);
-    padding: 3px 5px;
-    border-radius: 6px;
-    font-size: 80%;
+	background: rgba(255, 255, 255, 0.25);
+	padding: 3px 5px;
+	border-radius: 6px;
+	font-size: 80%;
 }
