@@ -6,42 +6,42 @@ import { useLowLevelClient } from '@/client/useLowLevelClient'
 const defaultUsername = localStorage.getItem('username') || ''
 const defaultPassword = localStorage.getItem('password') || ''
 const defaultEndpoint =
-    localStorage.getItem('endpoint') || 'wss://teach-vue-chat-server.glitch.me'
+	localStorage.getItem('endpoint') || 'wss://teach-vue-chat-server.glitch.me'
 
 const { connect } = useLowLevelClient()
 
 export const useAuthStore = defineStore('auth', () => {
-    const user = ref<Auth | null>(null)
+	const user = ref<Auth | null>(null)
 
-    async function login(
-        username = defaultUsername,
-        password = defaultPassword,
-        endpoint = defaultEndpoint
-    ) {
-        try {
-            user.value = await connect(username, password, endpoint)
+	async function login(
+		username = defaultUsername,
+		password = defaultPassword,
+		endpoint = defaultEndpoint
+	) {
+		try {
+			user.value = await connect(username, password, endpoint)
 
-            localStorage.setItem('username', username)
-            localStorage.setItem('password', password)
-            localStorage.setItem('endpoint', endpoint)
-        } catch (e) {
-            localStorage.setItem('password', '')
-            user.value = null
-            throw e
-        }
-    }
+			localStorage.setItem('username', username)
+			localStorage.setItem('password', password)
+			localStorage.setItem('endpoint', endpoint)
+		} catch (e) {
+			localStorage.setItem('password', '')
+			user.value = null
+			throw e
+		}
+	}
 
-    async function logout() {
-        localStorage.setItem('password', '')
-        window.location.reload()
-    }
+	async function logout() {
+		localStorage.setItem('password', '')
+		window.location.reload()
+	}
 
-    return {
-        user,
-        defaultUsername,
-        defaultPassword,
-        defaultEndpoint,
-        login,
-        logout,
-    }
+	return {
+		user,
+		defaultUsername,
+		defaultPassword,
+		defaultEndpoint,
+		login,
+		logout,
+	}
 })
