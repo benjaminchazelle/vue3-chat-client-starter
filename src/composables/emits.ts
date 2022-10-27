@@ -4,6 +4,7 @@ import type {
     GetConversationsEmit,
     GetOrCreateOneToOneConversationEmit,
     GetUsersEmit,
+    PostMessageEmit,
 } from '@/client/types/emits'
 import { useLowLevelClient } from '@/client/useLowLevelClient'
 import { useMessengerStore } from '@/stores/messenger'
@@ -22,6 +23,13 @@ export function useHighLevelClientEmits() {
                 {}
             )
             messengerStore.setUsers(users)
+        },
+
+        async postMessage(converastionId: string, message: string) {
+            await chatClient.emit<PostMessageEmit>('@postMessage', {
+                conversation_id: converastionId,
+                content: String(message),
+            })
         },
 
         async getConversations() {
