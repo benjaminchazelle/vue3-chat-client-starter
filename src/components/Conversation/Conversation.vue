@@ -3,8 +3,8 @@ import { onMounted, onUpdated, ref, toRefs, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import type { Conversation } from '@/client/types/business'
 //import { client } from '@/client/useLowLevelClient'
-import { useHighLevelClientEmits } from '@/composables/emits'
 import Group from '@/components/Group/Group.vue'
+import { useHighLevelClientEmits } from '@/composables/emits'
 import { useMessengerStore } from '@/stores/messenger'
 
 const clientEmits = useHighLevelClientEmits()
@@ -23,7 +23,7 @@ const { setCurrentConversationId } = messengerStore
 const router = useRouter()
 const route = useRoute()
 
-const inputSentMessage = ref('');
+const inputSentMessage = ref('')
 
 const conversationId = Array.isArray(route.params.id)
     ? route.params.id[0]
@@ -32,12 +32,9 @@ const conversationId = Array.isArray(route.params.id)
 setCurrentConversationId(conversationId)
 
 async function sendMessage() {
-    
-    let temp = inputSentMessage.value;
-    await clientEmits.postMessage(conversationId, String(temp) );
-    inputSentMessage.value = '';
-   
-
+    const temp = inputSentMessage.value
+    await clientEmits.postMessage(currentConversation.value.id, String(temp))
+    inputSentMessage.value = ''
 }
 
 function openGroupInformation() {
@@ -110,7 +107,6 @@ function checkUser(user: string): boolean {
 function convertStringToDate(date: string): Date {
     return new Date(date)
 }
-
 </script>
 
 <template>
@@ -254,13 +250,12 @@ function convertStringToDate(date: string): Date {
                             <div class="ui icon input">
                                 <input
                                     v-on:keyup.enter="sendMessage()"
-                                    v-model=inputSentMessage
+                                    v-model="inputSentMessage"
                                     class="prompt"
                                     type="text"
                                     placeholder="Rédiger un message"
                                 />
                                 <i @click="sendMessage()" class="send icon"></i>
-                               
                             </div>
                         </div>
                     </div>

@@ -25,10 +25,11 @@ export function useHighLevelClientEmits() {
             messengerStore.setUsers(users)
         },
 
-        async postMessage(converastionId:string, message:string){
-            
-            await chatClient.emit<PostMessageEmit>('@postMessage',{conversation_id: converastionId, content:String(message)});
-
+        async postMessage(converastionId: string, message: string) {
+            await chatClient.emit<PostMessageEmit>('@postMessage', {
+                conversation_id: converastionId,
+                content: String(message),
+            })
         },
 
         async getConversations() {
