@@ -1,74 +1,77 @@
 import { useRouter } from 'vue-router'
 import type {
-    CreateManyToManyConversationEmit,
-    GetConversationsEmit,
-    GetOrCreateOneToOneConversationEmit,
-    GetUsersEmit,
+	CreateManyToManyConversationEmit,
+	GetConversationsEmit,
+	GetOrCreateOneToOneConversationEmit,
+	GetUsersEmit,
+	PostMessageEmit,
 } from '@/client/types/emits'
 import { useLowLevelClient } from '@/client/useLowLevelClient'
 import { useMessengerStore } from '@/stores/messenger'
 
 export function useHighLevelClientEmits() {
-    const chatClient = useLowLevelClient()
+	const chatClient = useLowLevelClient()
 
-    const messengerStore = useMessengerStore()
+	const messengerStore = useMessengerStore()
 
-    const router = useRouter()
+	const router = useRouter()
 
-    return {
-        async getUsers() {
-            const { users } = await chatClient.emit<GetUsersEmit>(
-                '@getUsers',
-                {}
-            )
-            messengerStore.setUsers(users)
-        },
+	return {
+		async getUsers() {
+			const { users } = await chatClient.emit<GetUsersEmit>('@getUsers', {})
+			messengerStore.setUsers(users)
+		},
 
-        async getConversations() {
-            const { conversations } =
-                await chatClient.emit<GetConversationsEmit>(
-                    '@getConversations',
-                    {}
-                )
-            messengerStore.setConversations(conversations)
-        },
+		async postMessage(converastionId: string, message: string) {
+			await chatClient.emit<PostMessageEmit>('@postMessage', {
+				conversation_id: converastionId,
+				content: String(message),
+			})
+		},
 
-        async createOneToOneConversation(username: string) {
-            const response =
-                await chatClient.emit<GetOrCreateOneToOneConversationEmit>(
-                    '@getOrCreateOneToOneConversation',
-                    { username }
-                )
+		async getConversations() {
+			const { conversations } = await chatClient.emit<GetConversationsEmit>(
+				'@getConversations',
+				{}
+			)
+			messengerStore.setConversations(conversations)
+		},
 
-            const { conversation } = response
+		async createOneToOneConversation(username: string) {
+			const response =
+				await chatClient.emit<GetOrCreateOneToOneConversationEmit>(
+					'@getOrCreateOneToOneConversation',
+					{ username }
+				)
 
-            messengerStore.upsertConversation(conversation)
+			const { conversation } = response
 
-            router.push({
-                name: 'Conversation',
-                params: { id: conversation.id },
-            })
+			messengerStore.upsertConversation(conversation)
 
-            return response
-        },
+			router.push({
+				name: 'Conversation',
+				params: { id: conversation.id },
+			})
 
-        async createManyToManyConversation(usernames: string[]) {
-            const response =
-                await chatClient.emit<CreateManyToManyConversationEmit>(
-                    '@createManyToManyConversation',
-                    { usernames }
-                )
+			return response
+		},
 
-            const { conversation } = response
+		async createManyToManyConversation(usernames: string[]) {
+			const response = await chatClient.emit<CreateManyToManyConversationEmit>(
+				'@createManyToManyConversation',
+				{ usernames }
+			)
 
-            messengerStore.upsertConversation(conversation)
+			const { conversation } = response
 
-            router.push({
-                name: 'Conversation',
-                params: { id: conversation.id },
-            })
+			messengerStore.upsertConversation(conversation)
 
-            return response
-        },
-    }
+			router.push({
+				name: 'Conversation',
+				params: { id: conversation.id },
+			})
+
+			return response
+		},
+	}
 }
