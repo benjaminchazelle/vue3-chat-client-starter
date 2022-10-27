@@ -194,14 +194,22 @@ function sortConversations(conversations: Conversation[]): Conversation[] {
                             {{
                                 conversation.messages.length === 0
                                     ? 'Nouvelle conversation'
-                                    : conversation.messages[0].content
+                                    : conversation.messages[
+                                          conversation.messages.length - 1
+                                      ].content
                             }}
                         </div>
                         <span class="time">
                             {{
-                                convertStringToDate(
-                                    conversation.updated_at
-                                ).toLocaleTimeString()
+                                conversation.messages.length === 0
+                                    ? convertStringToDate(
+                                          conversation.updated_at
+                                      ).toLocaleTimeString()
+                                    : convertStringToDate(
+                                          conversation.messages[
+                                              conversation.messages.length - 1
+                                          ].posted_at
+                                      ).toLocaleTimeString()
                             }}
                         </span>
                     </div>
