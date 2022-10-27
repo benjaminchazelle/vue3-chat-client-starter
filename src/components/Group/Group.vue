@@ -8,23 +8,23 @@ const { users, currentConversation } = toRefs(messengerStore)
 
 const search = ref('')
 
-const isSearchInput = (username: string): boolean => {
+const isSearchInput = (username: string, searchInput: string): boolean => {
 	if (search.value.length <= 0) return true
-	return username.toLowerCase().includes(search.value.toLowerCase())
+	return username.toLowerCase().includes(searchInput.toLowerCase())
 }
 
 const members = computed(() =>
 	users.value.filter(
 		(user) =>
 			currentConversation.value?.participants.includes(user.username) &&
-			isSearchInput(user.username)
+			computed(() => isSearchInput(user.username, search.value)).value
 	)
 )
 const community = computed(() =>
 	users.value.filter(
 		(user) =>
 			!currentConversation.value?.participants.includes(user.username) &&
-			isSearchInput(user.username)
+			computed(() => isSearchInput(user.username, search.value)).value
 	)
 )
 </script>
