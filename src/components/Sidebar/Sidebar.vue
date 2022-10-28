@@ -100,7 +100,14 @@ function titleConversation(conversation: Conversation): string {
 
 function sortConversations(conversations: Conversation[]): Conversation[] {
 	return conversations.sort((a, b) =>
-		('' + b.updated_at).localeCompare(a.updated_at)
+		(b.messages.length === 0
+			? b.updated_at
+			: b.messages[b.messages.length - 1].posted_at
+		).localeCompare(
+			a.messages.length === 0
+				? a.updated_at
+				: a.messages[a.messages.length - 1].posted_at
+		)
 	)
 }
 </script>
@@ -148,7 +155,8 @@ function sortConversations(conversations: Conversation[]): Conversation[] {
 							class="prompt"
 							placeholder="Rechercher une conversation"
 							type="text"
-							v-model="searchInput" />
+							v-model="searchInput"
+						/>
 						<i class="search icon"></i>
 					</div>
 				</div>
@@ -162,11 +170,13 @@ function sortConversations(conversations: Conversation[]): Conversation[] {
 					selected: conversation.id === conversationSelectedId,
 				}"
 				:title="titleConversation(conversation)"
-				@click="openConversation(conversation.id)">
+				@click="openConversation(conversation.id)"
+			>
 				<a class="avatar">
 					<img
 						v-if="conversation.participants.length < 3"
-						:src="getProfilePicture(conversation.participants)" />
+						:src="getProfilePicture(conversation.participants)"
+					/>
 					<span v-else data-v-73baddaf="">
 						<i data-v-73baddaf="" class="users icon"></i>
 					</span>
@@ -179,9 +189,14 @@ function sortConversations(conversations: Conversation[]): Conversation[] {
 						</div>
 						<span class="time">
 							{{
-								convertStringToDate(
-									conversation.updated_at
-								).toLocaleDateString()
+								conversation.messages.length === 0
+									? convertStringToDate(
+											conversation.updated_at
+									  ).toLocaleDateString()
+									: convertStringToDate(
+											conversation.messages[conversation.messages.length - 1]
+												.posted_at
+									  ).toLocaleDateString()
 							}}
 						</span>
 					</div>
