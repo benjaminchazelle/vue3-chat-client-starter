@@ -6,17 +6,27 @@ const messengerStore = useMessengerStore()
 
 const { users, currentConversation } = toRefs(messengerStore)
 
+const search = ref('')
+
+const isSearchInput = (username: string, searchInput: string): boolean => {
+	if (search.value.length <= 0) return true
+	return username.toLowerCase().includes(searchInput.toLowerCase())
+}
+
 const members = computed(() =>
-	users.value.filter((user) =>
-		currentConversation.value?.participants.includes(user.username)
+	users.value.filter(
+		(user) =>
+			currentConversation.value?.participants.includes(user.username) &&
+			computed(() => isSearchInput(user.username, search.value)).value
 	)
 )
 const community = computed(() =>
 	users.value.filter(
-		(user) => !currentConversation.value?.participants.includes(user.username)
+		(user) =>
+			!currentConversation.value?.participants.includes(user.username) &&
+			computed(() => isSearchInput(user.username, search.value)).value
 	)
 )
-const search = ref('')
 </script>
 
 <template>
@@ -26,7 +36,8 @@ const search = ref('')
 				<input
 					type="text"
 					placeholder="Rechercher un utilisateur"
-					class="prompt" />
+					class="prompt"
+					v-model="search" />
 				<i class="search icon"></i>
 			</div>
 		</div>
