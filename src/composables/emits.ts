@@ -75,7 +75,7 @@ export function useHighLevelClientEmits() {
 			return response
 		},
 
-		async AddParticipant(username: string, conversationID: string) {
+		async addParticipant(username: string, conversationID: string) {
 			const response = await chatClient.emit<AddParticipantEmit>(
 				'@addParticipant',
 				{
