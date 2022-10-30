@@ -5,6 +5,7 @@ import type {
 	GetOrCreateOneToOneConversationEmit,
 	GetUsersEmit,
 	PostMessageEmit,
+	AddParticipantEmit,
 } from '@/client/types/emits'
 import { useLowLevelClient } from '@/client/useLowLevelClient'
 import { useMessengerStore } from '@/stores/messenger'
@@ -71,6 +72,17 @@ export function useHighLevelClientEmits() {
 				params: { id: conversation.id },
 			})
 
+			return response
+		},
+
+		async addParticipant(username: string, conversationID: string) {
+			const response = await chatClient.emit<AddParticipantEmit>(
+				'@addParticipant',
+				{
+					conversation_id: conversationID,
+					username: username,
+				}
+			)
 			return response
 		},
 	}

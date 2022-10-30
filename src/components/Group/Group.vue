@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, toRefs, computed } from 'vue'
+import { useHighLevelClientEmits } from '@/composables/emits'
 import { useMessengerStore } from '@/stores/messenger'
 
+const clientEmits = useHighLevelClientEmits()
 const messengerStore = useMessengerStore()
 
 const { users, currentConversation } = toRefs(messengerStore)
@@ -27,6 +29,13 @@ const community = computed(() =>
 			computed(() => isSearchInput(user.username, search.value)).value
 	)
 )
+
+async function addParticipant(username: string): Promise<void> {
+	const id = currentConversation.value?.id
+	if (!id) return
+
+	clientEmits.addParticipant(username, id)
+}
 </script>
 
 <template>
@@ -67,7 +76,10 @@ const community = computed(() =>
 		<div class="user" v-for="member of community" :key="member.username">
 			<img :src="member.picture_url" :alt="`Photo de ${member.username}`" />
 			<span>{{ member.username }}</span>
-			<i title="Ajouter à la conversation" class="circular plus icon link"></i>
+			<i
+				@click="addParticipant(member.username)"
+				title="Ajouter à la conversation"
+				class="circular plus icon link"></i>
 		</div>
 	</div>
 </template>
