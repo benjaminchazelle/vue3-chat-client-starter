@@ -6,6 +6,7 @@ import type {
 	GetUsersEmit,
 	PostMessageEmit,
 	AddParticipantEmit,
+	RemoveParticipantEmit,
 } from '@/client/types/emits'
 import { useLowLevelClient } from '@/client/useLowLevelClient'
 import { useMessengerStore } from '@/stores/messenger'
@@ -78,6 +79,17 @@ export function useHighLevelClientEmits() {
 		async addParticipant(username: string, conversationID: string) {
 			const response = await chatClient.emit<AddParticipantEmit>(
 				'@addParticipant',
+				{
+					conversation_id: conversationID,
+					username: username,
+				}
+			)
+			return response
+		},
+
+		async removeParticipant(username: string, conversationID: string) {
+			const response = await chatClient.emit<RemoveParticipantEmit>(
+				'@removeParticipant',
 				{
 					conversation_id: conversationID,
 					username: username,

@@ -36,6 +36,15 @@ async function addParticipant(username: string): Promise<void> {
 
 	clientEmits.addParticipant(username, id)
 }
+
+async function removeParticipant(username: string): Promise<void> {
+	const conv = currentConversation.value
+	if (!conv) return
+	if (conv.participants.length <= 3) return
+
+	const id = conv.id
+	clientEmits.removeParticipant(username, id)
+}
 </script>
 
 <template>
@@ -64,6 +73,7 @@ async function addParticipant(username: string): Promise<void> {
 			</span>
 			<i title="Modifier le surnom" class="circular quote left link icon"></i>
 			<i
+				@click="removeParticipant(member.username)"
 				title="Enlever de la conversation"
 				class="circular times icon link"
 				style=""></i>
