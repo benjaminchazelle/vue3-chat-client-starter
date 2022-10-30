@@ -155,8 +155,7 @@ function sortConversations(conversations: Conversation[]): Conversation[] {
 							class="prompt"
 							placeholder="Rechercher une conversation"
 							type="text"
-							v-model="searchInput"
-						/>
+							v-model="searchInput" />
 						<i class="search icon"></i>
 					</div>
 				</div>
@@ -170,13 +169,12 @@ function sortConversations(conversations: Conversation[]): Conversation[] {
 					selected: conversation.id === conversationSelectedId,
 				}"
 				:title="titleConversation(conversation)"
-				@click="openConversation(conversation.id)"
-			>
+				@click="openConversation(conversation.id)">
 				<a class="avatar">
 					<img
 						v-if="conversation.participants.length < 3"
 						:src="getProfilePicture(conversation.participants)"
-					/>
+						:alt="`Photo de Conversation #${conversation.id}`" />
 					<span v-else data-v-73baddaf="">
 						<i data-v-73baddaf="" class="users icon"></i>
 					</span>

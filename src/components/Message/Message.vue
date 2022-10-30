@@ -13,9 +13,6 @@ const props = ref(ps)
 
 const authStore = useAuthStore()
 const { user } = toRefs(authStore)
-
-console.log(user)
-console.log(props.value)
 </script>
 
 <template>
@@ -34,12 +31,7 @@ console.log(props.value)
 			:src="props.urlIcon"
 			:alt="props.message.from" />
 		<div class="bubble top bottom">{{ props.message.content }}</div>
-		<div class="reacts">
-			<!-- <span class="circular icon">
-                1
-                <i title="Aimer" class="heart outline icon"></i>
-            </span> -->
-		</div>
+		<div class="reacts"></div>
 		<div class="controls">
 			<i title="Répondre" class="circular reply icon"></i>
 			<span class="react">
