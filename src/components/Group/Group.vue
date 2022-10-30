@@ -34,7 +34,7 @@ async function addParticipant(username: string): Promise<void> {
 	const id = currentConversation.value?.id
 	if (!id) return
 
-	clientEmits.AddParticipant(username, id)
+	clientEmits.addParticipant(username, id)
 }
 </script>
 
