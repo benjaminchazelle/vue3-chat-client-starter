@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, toRefs } from 'vue'
+import { computed, ref, toRefs } from 'vue'
 import reacts from '@/assets/reacts.json'
 import type { Message } from '@/client/types/business'
 import { useAuthStore } from '@/stores/auth'
@@ -9,16 +9,56 @@ const ps = defineProps<{
 	urlIcon: string
 }>()
 
+const emit = defineEmits(['react'])
+
 const props = ref(ps)
 
 const authStore = useAuthStore()
 const { user } = toRefs(authStore)
+
+function getReactData(_key: string) {
+	return reacts.find((data) => data.key === _key)
+}
+
+const reactions = computed(() => {
+	const map = new Map<string, number>()
+
+	const reacts = props.value.message.reactions
+	for (const userID in reacts) {
+		const value = map.get(reacts[userID]) ?? 0
+		map.set(reacts[userID], value + 1)
+	}
+	return map
+})
+
+async function reactMessage(react: string): Promise<void> {
+	if (
+		!user.value ||
+		(react !== 'HEART' &&
+			react !== 'THUMB' &&
+			react !== 'HAPPY' &&
+			react !== 'SAD')
+	)
+		return
+
+	props.value.message.reactions[user.value.username] = react
+
+	emit('react', { message: props.value.message, react: react })
+}
 </script>
 
 <template>
 	<div v-if="user?.username === props.message.from" class="message mine">
 		<div class="bubble top bottom">{{ props.message.content }}</div>
-		<div class="reacts"></div>
+		<div class="reacts">
+			<span v-for="react in reactions" :key="react[0]" class="circular icon">
+				{{ react[1] }}
+				<i
+					:title="getReactData(react[0])?.label"
+					:class="getReactData(react[0])?.iconClass"
+					class="outline icon"></i>
+			</span>
+		</div>
 		<div class="controls">
 			<i title="Supprimer" class="circular trash icon"></i>
 			<i title="Editer" class="circular edit icon"></i>
@@ -31,7 +71,15 @@ const { user } = toRefs(authStore)
 			:src="props.urlIcon"
 			:alt="props.message.from" />
 		<div class="bubble top bottom">{{ props.message.content }}</div>
-		<div class="reacts"></div>
+		<div class="reacts">
+			<span v-for="react in reactions" :key="react[0]" class="circular icon">
+				{{ react[1] }}
+				<i
+					:title="getReactData(react[0])?.label"
+					:class="getReactData(react[0])?.iconClass"
+					class="outline icon"></i>
+			</span>
+		</div>
 		<div class="controls">
 			<i title="Répondre" class="circular reply icon"></i>
 			<span class="react">
@@ -40,7 +88,8 @@ const { user } = toRefs(authStore)
 					v-for="react of reacts"
 					:key="react.key"
 					:title="react.label"
-					:class="react.iconClass"></i>
+					:class="react.iconClass"
+					@click="reactMessage(react.key)"></i>
 			</span>
 		</div>
 	</div>

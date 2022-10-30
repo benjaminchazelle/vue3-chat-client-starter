@@ -96,6 +96,18 @@ function getProfilePicture(participants: string[] | string): string {
 function convertStringToDate(date: string): Date {
 	return new Date(date)
 }
+
+function reactMessage($event: {
+	message: typeof Message
+	react: 'HEART' | 'THUMB' | 'HAPPY' | 'SAD'
+}): void {
+	if (!currentConversation.value) return
+	clientEmits.reactMessage(
+		$event.message.id,
+		$event.react,
+		currentConversation.value.id
+	)
+}
 </script>
 
 <template>
@@ -166,7 +178,8 @@ function convertStringToDate(date: string): Date {
 							</div>
 							<Message
 								:message="message"
-								:url-icon="getProfilePicture(message.from)" />
+								:url-icon="getProfilePicture(message.from)"
+								@react="reactMessage($event)" />
 						</div>
 					</div>
 				</div>

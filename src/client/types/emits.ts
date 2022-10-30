@@ -77,7 +77,7 @@ export interface ReactMessageEmit extends Emit {
 	payload: {
 		conversation_id: string
 		message_id: string
-		reaction: Message['reactions'][0]
+		reaction: 'HEART' | 'THUMB' | 'HAPPY' | 'SAD'
 	}
 	response: {}
 }

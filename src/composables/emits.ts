@@ -7,6 +7,7 @@ import type {
 	PostMessageEmit,
 	AddParticipantEmit,
 	RemoveParticipantEmit,
+	ReactMessageEmit,
 } from '@/client/types/emits'
 import { useLowLevelClient } from '@/client/useLowLevelClient'
 import { useMessengerStore } from '@/stores/messenger'
@@ -93,6 +94,22 @@ export function useHighLevelClientEmits() {
 				{
 					conversation_id: conversationID,
 					username: username,
+				}
+			)
+			return response
+		},
+
+		async reactMessage(
+			messageID: string,
+			react: 'HEART' | 'THUMB' | 'HAPPY' | 'SAD',
+			conversationID: string
+		) {
+			const response = await chatClient.emit<ReactMessageEmit>(
+				'@reactMessage',
+				{
+					conversation_id: conversationID,
+					message_id: messageID,
+					reaction: react,
 				}
 			)
 			return response
