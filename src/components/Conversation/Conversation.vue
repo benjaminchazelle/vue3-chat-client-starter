@@ -26,7 +26,16 @@ async function sendMessage(): Promise<void> {
 	if (!currentConversation.value) return
 
 	const temp = inputSentMessage.value
-	await clientEmits.postMessage(currentConversation.value.id, String(temp))
+	if (replyMessage.value.user !== '') {
+		await clientEmits.replyMessage(
+			currentConversation.value.id,
+			replyMessage.value.messageId,
+			String(temp)
+		)
+		replyToMessage('', '', '')
+	} else {
+		await clientEmits.postMessage(currentConversation.value.id, String(temp))
+	}
 	inputSentMessage.value = ''
 }
 
@@ -108,6 +117,24 @@ function reactMessage($event: {
 		currentConversation.value.id
 	)
 }
+
+const replyMessage = ref({
+	user: '',
+	content: '',
+	messageId: '',
+})
+
+function replyToMessage(
+	user: string,
+	content: string | null,
+	messageId: string
+) {
+	replyMessage.value = {
+		user: user,
+		content: content === null ? '' : content,
+		messageId: messageId,
+	}
+}
 </script>
 
 <template>
@@ -179,7 +206,10 @@ function reactMessage($event: {
 							<Message
 								:message="message"
 								:url-icon="getProfilePicture(message.from)"
-								@react="reactMessage($event)" />
+								@react="reactMessage($event)"
+								@reply-to-message="
+									replyToMessage(message.from, message.content, message.id)
+								" />
 						</div>
 					</div>
 				</div>
@@ -189,10 +219,10 @@ function reactMessage($event: {
 				</div>
 				<div class="conversation-footer">
 					<div class="wrapper">
-						<p>
+						<p v-if="replyMessage.user !== ''">
 							<i title="Abandonner" class="circular times small icon link"></i>
-							Répondre à Alice :
-							<span>On peut même éditer ou supprimer des messages !</span>
+							Répondre à {{ replyMessage.user }} :
+							<span>{{ replyMessage.content }}</span>
 						</p>
 
 						<div class="ui fluid search">

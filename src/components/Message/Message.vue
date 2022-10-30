@@ -9,7 +9,7 @@ const ps = defineProps<{
 	urlIcon: string
 }>()
 
-const emit = defineEmits(['react'])
+const emit = defineEmits(['react', 'reply-to-message'])
 
 const props = ref(ps)
 
@@ -45,11 +45,18 @@ async function reactMessage(react: string): Promise<void> {
 
 	emit('react', { message: props.value.message, react: react })
 }
+
+const replyToMessage = () => emit('reply-to-message')
 </script>
 
 <template>
 	<div v-if="user?.username === props.message.from" class="message mine">
-		<div class="bubble top bottom">{{ props.message.content }}</div>
+		<div class="bubble top bottom">
+			<p v-if="props.message.reply_to" class="reply_content">
+				{{ props.message.reply_to.content }}
+			</p>
+			{{ props.message.content }}
+		</div>
 		<div class="reacts">
 			<span v-for="react in reactions" :key="react[0]" class="circular icon">
 				{{ react[1] }}
@@ -62,7 +69,10 @@ async function reactMessage(react: string): Promise<void> {
 		<div class="controls">
 			<i title="Supprimer" class="circular trash icon"></i>
 			<i title="Editer" class="circular edit icon"></i>
-			<i title="Répondre" class="circular reply icon"></i>
+			<i
+				title="Répondre"
+				class="circular reply icon"
+				@click="replyToMessage()"></i>
 		</div>
 	</div>
 	<div v-else class="message">
@@ -81,7 +91,10 @@ async function reactMessage(react: string): Promise<void> {
 			</span>
 		</div>
 		<div class="controls">
-			<i title="Répondre" class="circular reply icon"></i>
+			<i
+				title="Répondre"
+				class="circular reply icon"
+				@click="replyToMessage()"></i>
 			<span class="react">
 				<i
 					class="circular outline icon"
