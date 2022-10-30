@@ -144,5 +144,4 @@ export function useHighLevelClientEmits() {
 			return response
 		},
 	}
-
 }
