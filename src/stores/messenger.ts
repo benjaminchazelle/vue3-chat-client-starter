@@ -89,7 +89,16 @@ export const useMessengerStore = defineStore('messenger', () => {
 		)
 
 		if (conversationIndex !== -1) {
-			conversationsRef.value[conversationIndex] = { ...conversation }
+			const isParticipant = !!conversation.participants.find(
+				(memberUserName) => memberUserName === authenticatedUsername.value
+			)
+			if (!isParticipant) {
+				conversationsRef.value = conversationsRef.value.filter(
+					(_conv) => _conv.id !== conversation.id
+				)
+			} else {
+				conversationsRef.value[conversationIndex] = { ...conversation }
+			}
 		} else {
 			conversationsRef.value.push({ ...conversation })
 		}
