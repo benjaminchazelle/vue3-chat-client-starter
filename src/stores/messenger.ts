@@ -89,10 +89,10 @@ export const useMessengerStore = defineStore('messenger', () => {
 		)
 
 		if (conversationIndex !== -1) {
-			const isPartipant = !!conversation.participants.find(
+			const isParticipant = !!conversation.participants.find(
 				(memberUserName) => memberUserName === authenticatedUsername.value
 			)
-			if (!isPartipant) {
+			if (!isParticipant) {
 				conversationsRef.value = conversationsRef.value.filter(
 					(_conv) => _conv.id !== conversation.id
 				)
