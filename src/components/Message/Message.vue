@@ -31,7 +31,7 @@ const reactions = computed(() => {
 	return map
 })
 
-async function reactMessage(react: string): Promise<void> {
+const reactMessage = (react: string): void => {
 	if (
 		!user.value ||
 		(react !== 'HEART' &&
@@ -40,8 +40,6 @@ async function reactMessage(react: string): Promise<void> {
 			react !== 'SAD')
 	)
 		return
-
-	props.value.message.reactions[user.value.username] = react
 
 	emit('react', { message: props.value.message, react: react })
 }

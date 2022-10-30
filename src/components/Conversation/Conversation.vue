@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUpdated, ref, toRefs, watch } from 'vue'
+import { computed, onMounted, onUpdated, ref, toRefs, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Conversation } from '@/client/types/business'
 import Group from '@/components/Group/Group.vue'
@@ -21,6 +21,10 @@ const { users, currentConversation, authenticatedUsername } =
 const router = useRouter()
 
 const inputSentMessage = ref('')
+
+const messages = computed(() => {
+	return currentConversation.value?.messages ?? []
+})
 
 async function sendMessage(): Promise<void> {
 	if (!currentConversation.value) return
@@ -196,7 +200,7 @@ function replyToMessage(
 					<div class="wrapper">
 						<div
 							class="message-container"
-							v-for="message in currentConversation?.messages"
+							v-for="message in messages"
 							:key="message.id">
 							<div class="time">
 								{{

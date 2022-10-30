@@ -114,10 +114,14 @@ export const useMessengerStore = defineStore('messenger', () => {
 				conversationIndex
 			].messages.findIndex((_message) => _message.id === message.id)
 
-			if (messageIndex !== -1) return
-			conversationsRef.value[conversationIndex].messages.push({
-				...message,
-			})
+			if (messageIndex !== -1) {
+				conversationsRef.value[conversationIndex].messages[messageIndex] =
+					message
+			} else {
+				conversationsRef.value[conversationIndex].messages.push({
+					...message,
+				})
+			}
 		}
 	}
 })
