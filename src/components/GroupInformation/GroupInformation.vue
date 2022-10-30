@@ -78,7 +78,7 @@ function getProfilePicture(participants: string[]): string {
 			<p>Last message on {{ date.toLocaleDateString() }}</p>
 			<h2>Participants</h2>
 
-			<table>
+			<table aria-describedby="conversation informations">
 				<tr>
 					<th>Name</th>
 					<th>Nickname</th>

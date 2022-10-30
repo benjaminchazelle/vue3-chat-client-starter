@@ -72,7 +72,7 @@ export function listenHighLevelClientEvents() {
 	chatClient.on<MessageReactedEvent>(
 		'@messageReacted',
 		async ({ conversation_id, message }) => {
-			//TODO
+			messengerStore.upsertMessageConversation(conversation_id, message)
 		}
 	)
 
@@ -86,7 +86,10 @@ export function listenHighLevelClientEvents() {
 	chatClient.on<MessageDeletedEvent>(
 		'@messageDeleted',
 		async ({ conversation_id, message_id }) => {
-			//TODO
+			messengerStore.upsertDeletedMessageConversation(
+				conversation_id,
+				message_id
+			)
 		}
 	)
 

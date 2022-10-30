@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUpdated, ref, toRefs, watch } from 'vue'
+import { computed, onMounted, onUpdated, ref, toRefs, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Conversation } from '@/client/types/business'
 import Group from '@/components/Group/Group.vue'
@@ -22,11 +22,24 @@ const router = useRouter()
 
 const inputSentMessage = ref('')
 
+const messages = computed(() => {
+	return currentConversation.value?.messages ?? []
+})
+
 async function sendMessage(): Promise<void> {
 	if (!currentConversation.value) return
 
 	const temp = inputSentMessage.value
-	await clientEmits.postMessage(currentConversation.value.id, String(temp))
+	if (replyMessage.value.user !== '') {
+		await clientEmits.replyMessage(
+			currentConversation.value.id,
+			replyMessage.value.messageId,
+			String(temp)
+		)
+		replyToMessage('', '', '')
+	} else {
+		await clientEmits.postMessage(currentConversation.value.id, String(temp))
+	}
 	inputSentMessage.value = ''
 }
 
@@ -96,6 +109,42 @@ function getProfilePicture(participants: string[] | string): string {
 function convertStringToDate(date: string): Date {
 	return new Date(date)
 }
+
+function reactMessage($event: {
+	message: typeof Message
+	react: 'HEART' | 'THUMB' | 'HAPPY' | 'SAD'
+}): void {
+	if (!currentConversation.value) return
+	clientEmits.reactMessage(
+		$event.message.id,
+		$event.react,
+		currentConversation.value.id
+	)
+}
+
+const replyMessage = ref({
+	user: '',
+	content: '',
+	messageId: '',
+})
+
+function replyToMessage(
+	user: string,
+	content: string | null,
+	messageId: string
+) {
+	replyMessage.value = {
+		user: user,
+		content: content === null ? '' : content,
+		messageId: messageId,
+	}
+}
+
+async function deleteMessage(messageId: string): Promise<void> {
+	if (!currentConversation.value) return
+
+	await clientEmits.deleteMessage(currentConversation.value.id, messageId)
+}
 </script>
 
 <template>
@@ -157,7 +206,7 @@ function convertStringToDate(date: string): Date {
 					<div class="wrapper">
 						<div
 							class="message-container"
-							v-for="message in currentConversation?.messages"
+							v-for="message in messages"
 							:key="message.id">
 							<div class="time">
 								{{
@@ -166,7 +215,12 @@ function convertStringToDate(date: string): Date {
 							</div>
 							<Message
 								:message="message"
-								:url-icon="getProfilePicture(message.from)" />
+								:url-icon="getProfilePicture(message.from)"
+								@react="reactMessage($event)"
+								@reply-to-message="
+									replyToMessage(message.from, message.content, message.id)
+								"
+								@delete-message="deleteMessage(message.id)" />
 						</div>
 					</div>
 				</div>
@@ -176,10 +230,10 @@ function convertStringToDate(date: string): Date {
 				</div>
 				<div class="conversation-footer">
 					<div class="wrapper">
-						<p>
+						<p v-if="replyMessage.user !== ''">
 							<i title="Abandonner" class="circular times small icon link"></i>
-							Répondre à Alice :
-							<span>On peut même éditer ou supprimer des messages !</span>
+							Répondre à {{ replyMessage.user }} :
+							<span>{{ replyMessage.content }}</span>
 						</p>
 
 						<div class="ui fluid search">
