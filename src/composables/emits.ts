@@ -7,6 +7,7 @@ import type {
 	PostMessageEmit,
 	AddParticipantEmit,
 	RemoveParticipantEmit,
+	ReplyMessageEmit,
 } from '@/client/types/emits'
 import { useLowLevelClient } from '@/client/useLowLevelClient'
 import { useMessengerStore } from '@/stores/messenger'
@@ -93,6 +94,18 @@ export function useHighLevelClientEmits() {
 				{
 					conversation_id: conversationID,
 					username: username,
+				}
+			)
+			return response
+		},
+
+		async replyMessage(conversationId: string, messageId: string, message: string) {
+			const response = await chatClient.emit<ReplyMessageEmit>(
+				'@replyMessage',
+				{
+					conversation_id: conversationId,
+					message_id: messageId,
+					content: message,
 				}
 			)
 			return response
