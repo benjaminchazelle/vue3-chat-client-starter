@@ -34,9 +34,7 @@ async function sendMessage(): Promise<void> {
 	if (!currentConversation.value) return
 
     if(isEditMessage.value){
-        await clientEmits.editMessage(currentConversation.value.id,idMessageToEdit.value,inputSentMessage.value);
-        isEditMessage.value = false;
-        inputSentMessage.value = '';
+        editMessage();
         return;
     }
 
@@ -54,15 +52,21 @@ async function sendMessage(): Promise<void> {
 	inputSentMessage.value = ''
 }
 
-async function editMessage(messageId:string, messageContent:string): Promise<void> {
-    console.log('EDIT : ',messageId, " --> ", messageContent);
-    inputSentMessage.value = '';
+function enterEditionMessage(messageId:string, messageContent:string): Promise<void> {
     isEditMessage.value = true;
     inputSentMessage.value = messageContent;
     idMessageToEdit.value = messageId;
-    console.log('EDIT : ',idMessageToEdit.value)
-    
+
 }
+
+async function editMessage(): Promise<void>{
+    await clientEmits.editMessage(currentConversation.value.id,idMessageToEdit.value,inputSentMessage.value);
+    isEditMessage.value = false;
+    inputSentMessage.value = '';
+
+};
+
+
 
 function exitEditMode(){
     isEditMessage.value = false;
@@ -247,7 +251,7 @@ async function deleteMessage(messageId: string): Promise<void> {
 									replyToMessage(message.from, message.content, message.id)
 								"
 								@delete-message="deleteMessage(message.id)"
-                                @edit-message="editMessage(message.id, message.content)"
+                                @edit-message="enterEditionMessage(message.id , String(message.content))"
 
                                  />
 						</div>
