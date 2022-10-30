@@ -13,6 +13,10 @@ const props = ref(ps)
 
 const authStore = useAuthStore()
 const { user } = toRefs(authStore)
+
+const emit = defineEmits(['reply-to-message'])
+
+const replyToMessage = () => emit('reply-to-message')
 </script>
 
 <template>
@@ -22,7 +26,11 @@ const { user } = toRefs(authStore)
 		<div class="controls">
 			<i title="Supprimer" class="circular trash icon"></i>
 			<i title="Editer" class="circular edit icon"></i>
-			<i title="Répondre" class="circular reply icon"></i>
+			<i
+				title="Répondre"
+				class="circular reply icon"
+				@click="replyToMessage()"
+			></i>
 		</div>
 	</div>
 	<div v-else class="message">
@@ -33,7 +41,11 @@ const { user } = toRefs(authStore)
 		<div class="bubble top bottom">{{ props.message.content }}</div>
 		<div class="reacts"></div>
 		<div class="controls">
-			<i title="Répondre" class="circular reply icon"></i>
+			<i
+				title="Répondre"
+				class="circular reply icon"
+				@click="replyToMessage()"
+			></i>
 			<span class="react">
 				<i
 					class="circular outline icon"
