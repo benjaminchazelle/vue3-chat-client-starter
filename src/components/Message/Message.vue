@@ -9,7 +9,7 @@ const ps = defineProps<{
 	urlIcon: string
 }>()
 
-const emit = defineEmits(['react', 'reply-to-message'])
+const emit = defineEmits(['react', 'reply-to-message', 'delete-message'])
 
 const props = ref(ps)
 
@@ -45,6 +45,7 @@ const reactMessage = (react: string): void => {
 }
 
 const replyToMessage = () => emit('reply-to-message')
+const deleteMessage = () => emit('delete-message')
 </script>
 
 <template>
@@ -65,7 +66,10 @@ const replyToMessage = () => emit('reply-to-message')
 			</span>
 		</div>
 		<div class="controls">
-			<i title="Supprimer" class="circular trash icon"></i>
+			<i
+				title="Supprimer"
+				class="circular trash icon"
+				@click="deleteMessage()"></i>
 			<i title="Editer" class="circular edit icon"></i>
 			<i
 				title="Répondre"
