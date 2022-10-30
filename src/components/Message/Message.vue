@@ -43,7 +43,12 @@ const replyToMessage = () => emit('reply-to-message')
 			:title="props.message.from"
 			:src="props.urlIcon"
 			:alt="props.message.from" />
-		<div class="bubble top bottom">{{ props.message.content }}</div>
+		<div class="bubble top bottom">
+			<p v-if="props.message.reply_to" class="reply_content">
+				{{ props.message.reply_to.content }}
+			</p>
+			{{ props.message.content }}
+		</div>
 		<div class="reacts"></div>
 		<div class="controls">
 			<i
