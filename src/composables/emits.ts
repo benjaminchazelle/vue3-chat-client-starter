@@ -8,6 +8,7 @@ import type {
 	AddParticipantEmit,
 	RemoveParticipantEmit,
 	ReplyMessageEmit,
+	DeleteMessageEmit,
 } from '@/client/types/emits'
 import { useLowLevelClient } from '@/client/useLowLevelClient'
 import { useMessengerStore } from '@/stores/messenger'
@@ -110,5 +111,17 @@ export function useHighLevelClientEmits() {
 			)
 			return response
 		},
+
+		async deleteMessage(conversationId: string, messageId: string) {
+			const response = await chatClient.emit<DeleteMessageEmit>(
+				'@deleteMessage',
+				{
+					conversation_id: conversationId,
+					message_id: messageId,
+				}
+			)
+			return response
+		},
 	}
+
 }
