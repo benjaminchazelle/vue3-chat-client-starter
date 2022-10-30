@@ -14,9 +14,10 @@ const props = ref(ps)
 const authStore = useAuthStore()
 const { user } = toRefs(authStore)
 
-const emit = defineEmits(['reply-to-message'])
+const emit = defineEmits(['reply-to-message', 'delete-message'])
 
 const replyToMessage = () => emit('reply-to-message')
+const deleteMessage = () => emit('delete-message')
 </script>
 
 <template>
@@ -29,7 +30,11 @@ const replyToMessage = () => emit('reply-to-message')
 		</div>
 		<div class="reacts"></div>
 		<div class="controls">
-			<i title="Supprimer" class="circular trash icon"></i>
+			<i
+				title="Supprimer"
+				class="circular trash icon"
+				@click="deleteMessage()"
+			></i>
 			<i title="Editer" class="circular edit icon"></i>
 			<i
 				title="Répondre"

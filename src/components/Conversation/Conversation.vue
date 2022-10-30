@@ -123,6 +123,13 @@ function replyToMessage(
 		messageId: messageId,
 	}
 }
+
+async function deleteMessage(messageId: string): Promise<void> {
+	if (!currentConversation.value) return
+
+	await clientEmits.deleteMessage(currentConversation.value.id, messageId)
+}
+
 </script>
 
 <template>
@@ -197,6 +204,7 @@ function replyToMessage(
 								@reply-to-message="
 									replyToMessage(message.from, message.content, message.id)
 								"
+								@delete-message="deleteMessage(message.id)"
 							/>
 						</div>
 					</div>
