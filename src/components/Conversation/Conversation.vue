@@ -11,6 +11,10 @@ const clientEmits = useHighLevelClientEmits()
 
 const groupPanel = ref(false)
 
+const isEditMessage = ref(false);
+
+const idMessageToEdit = ref('');
+
 const scrollElement = ref<HTMLElement | null>(null)
 
 const messengerStore = useMessengerStore()
@@ -29,6 +33,13 @@ const messages = computed(() => {
 async function sendMessage(): Promise<void> {
 	if (!currentConversation.value) return
 
+    if(isEditMessage.value){
+        await clientEmits.editMessage(currentConversation.value.id,idMessageToEdit.value,inputSentMessage.value);
+        isEditMessage.value = false;
+        inputSentMessage.value = '';
+        return;
+    }
+
 	const temp = inputSentMessage.value
 	if (replyMessage.value.user !== '') {
 		await clientEmits.replyMessage(
@@ -41,6 +52,21 @@ async function sendMessage(): Promise<void> {
 		await clientEmits.postMessage(currentConversation.value.id, String(temp))
 	}
 	inputSentMessage.value = ''
+}
+
+async function editMessage(messageId:string, messageContent:string): Promise<void> {
+    console.log('EDIT : ',messageId, " --> ", messageContent);
+    inputSentMessage.value = '';
+    isEditMessage.value = true;
+    inputSentMessage.value = messageContent;
+    idMessageToEdit.value = messageId;
+    console.log('EDIT : ',idMessageToEdit.value)
+    
+}
+
+function exitEditMode(){
+    isEditMessage.value = false;
+    inputSentMessage.value = '';
 }
 
 function openGroupInformation(): void {
@@ -220,7 +246,10 @@ async function deleteMessage(messageId: string): Promise<void> {
 								@reply-to-message="
 									replyToMessage(message.from, message.content, message.id)
 								"
-								@delete-message="deleteMessage(message.id)" />
+								@delete-message="deleteMessage(message.id)"
+                                @edit-message="editMessage(message.id, message.content)"
+
+                                 />
 						</div>
 					</div>
 				</div>
@@ -238,6 +267,13 @@ async function deleteMessage(messageId: string): Promise<void> {
 
 						<div class="ui fluid search">
 							<div class="ui icon input">
+                                <div v-if="isEditMessage" >
+                                    <i
+                                    title="Retour"
+                                    class="circular cancel icon"
+                                    @click="exitEditMode()"></i>
+                                    <p>Edition</p>
+                                </div>
 								<input
 									v-on:keyup.enter="sendMessage()"
 									v-model="inputSentMessage"
