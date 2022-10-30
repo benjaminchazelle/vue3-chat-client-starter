@@ -130,3 +130,10 @@ img + .bubble {
 .message:hover * {
 	opacity: 1 !important;
 }
+
+.reply_content {
+	background: rgba(255, 255, 255, 0.25);
+	padding: 3px 5px;
+	border-radius: 6px;
+	font-size: 80%;
+}

@@ -17,7 +17,12 @@ const { user } = toRefs(authStore)
 
 <template>
 	<div v-if="user?.username === props.message.from" class="message mine">
-		<div class="bubble top bottom">{{ props.message.content }}</div>
+		<div class="bubble top bottom">
+			<p v-if="props.message.reply_to" class="reply_content">
+				{{ props.message.reply_to.content }}
+			</p>
+			{{ props.message.content }}
+		</div>
 		<div class="reacts"></div>
 		<div class="controls">
 			<i title="Supprimer" class="circular trash icon"></i>
