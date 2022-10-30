@@ -86,7 +86,10 @@ export function listenHighLevelClientEvents() {
 	chatClient.on<MessageDeletedEvent>(
 		'@messageDeleted',
 		async ({ conversation_id, message_id }) => {
-			messengerStore.upsertDeletedMessageConversation(conversation_id, message_id)
+			messengerStore.upsertDeletedMessageConversation(
+				conversation_id,
+				message_id
+			)
 		}
 	)
 

@@ -116,7 +116,10 @@ function sortConversations(conversations: Conversation[]): Conversation[] {
 	<div class="sidebar">
 		<div class="user" v-if="user">
 			<div class="user-picture">
-				<img :src="user.picture_url" class="ui circular image" />
+				<img
+					:src="user.picture_url"
+					class="ui circular image"
+					:alt="`Photo de ${user.username}`" />
 			</div>
 
 			<div class="user-info">

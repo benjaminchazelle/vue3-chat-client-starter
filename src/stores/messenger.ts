@@ -126,7 +126,10 @@ export const useMessengerStore = defineStore('messenger', () => {
 		}
 	}
 
-	function upsertDeletedMessageConversation(conversationId: string, messageId: string) {
+	function upsertDeletedMessageConversation(
+		conversationId: string,
+		messageId: string
+	) {
 		const conversationIndex = conversationsRef.value.findIndex(
 			(_conversation) => _conversation.id === conversationId
 		)
@@ -137,7 +140,10 @@ export const useMessengerStore = defineStore('messenger', () => {
 			].messages.findIndex((_message) => _message.id === messageId)
 
 			if (messageIndex !== -1) {
-				conversationsRef.value[conversationIndex].messages.splice(messageIndex, 1)
+				conversationsRef.value[conversationIndex].messages.splice(
+					messageIndex,
+					1
+				)
 			}
 		}
 	}
