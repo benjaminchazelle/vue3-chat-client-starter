@@ -7,6 +7,7 @@ import type {
 	PostMessageEmit,
 	AddParticipantEmit,
 	RemoveParticipantEmit,
+	ReactMessageEmit,
 	ReplyMessageEmit,
 	DeleteMessageEmit,
 } from '@/client/types/emits'
@@ -100,7 +101,27 @@ export function useHighLevelClientEmits() {
 			return response
 		},
 
-		async replyMessage(conversationId: string, messageId: string, message: string) {
+		async reactMessage(
+			messageID: string,
+			react: 'HEART' | 'THUMB' | 'HAPPY' | 'SAD',
+			conversationID: string
+		) {
+			const response = await chatClient.emit<ReactMessageEmit>(
+				'@reactMessage',
+				{
+					conversation_id: conversationID,
+					message_id: messageID,
+					reaction: react,
+				}
+			)
+			return response
+		},
+
+		async replyMessage(
+			conversationId: string,
+			messageId: string,
+			message: string
+		) {
 			const response = await chatClient.emit<ReplyMessageEmit>(
 				'@replyMessage',
 				{
