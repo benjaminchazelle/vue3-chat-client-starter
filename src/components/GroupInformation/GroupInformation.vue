@@ -66,6 +66,7 @@ function getProfilePicture(participants: string[]): string {
 			<img
 				v-if="conversation.participants.length < 3"
 				:src="getProfilePicture(conversation.participants)"
+				:alt="`Photo de Conversation #${conversation.id}`"
 				class="avatar" />
 			<span v-else>
 				<i class="avatar users icon"></i>
