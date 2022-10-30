@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUpdated, ref, toRefs, watch } from 'vue'
+import { computed, onMounted, onUpdated, ref, toRefs, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Conversation } from '@/client/types/business'
 import Group from '@/components/Group/Group.vue'
@@ -21,6 +21,10 @@ const { users, currentConversation, authenticatedUsername } =
 const router = useRouter()
 
 const inputSentMessage = ref('')
+
+const messages = computed(() => {
+	return currentConversation.value?.messages ?? []
+})
 
 async function sendMessage(): Promise<void> {
 	if (!currentConversation.value) return
@@ -106,6 +110,18 @@ function convertStringToDate(date: string): Date {
 	return new Date(date)
 }
 
+function reactMessage($event: {
+	message: typeof Message
+	react: 'HEART' | 'THUMB' | 'HAPPY' | 'SAD'
+}): void {
+	if (!currentConversation.value) return
+	clientEmits.reactMessage(
+		$event.message.id,
+		$event.react,
+		currentConversation.value.id
+	)
+}
+
 const replyMessage = ref({
 	user: '',
 	content: '',
@@ -122,6 +138,12 @@ function replyToMessage(
 		content: content === null ? '' : content,
 		messageId: messageId,
 	}
+}
+
+async function deleteMessage(messageId: string): Promise<void> {
+	if (!currentConversation.value) return
+
+	await clientEmits.deleteMessage(currentConversation.value.id, messageId)
 }
 </script>
 
@@ -184,7 +206,7 @@ function replyToMessage(
 					<div class="wrapper">
 						<div
 							class="message-container"
-							v-for="message in currentConversation?.messages"
+							v-for="message in messages"
 							:key="message.id">
 							<div class="time">
 								{{
@@ -194,10 +216,11 @@ function replyToMessage(
 							<Message
 								:message="message"
 								:url-icon="getProfilePicture(message.from)"
+								@react="reactMessage($event)"
 								@reply-to-message="
 									replyToMessage(message.from, message.content, message.id)
 								"
-							/>
+								@delete-message="deleteMessage(message.id)" />
 						</div>
 					</div>
 				</div>
