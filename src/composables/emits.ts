@@ -10,6 +10,7 @@ import type {
 	ReactMessageEmit,
 	ReplyMessageEmit,
 	DeleteMessageEmit,
+    EditMessageEmit,
 } from '@/client/types/emits'
 import { useLowLevelClient } from '@/client/useLowLevelClient'
 import { useMessengerStore } from '@/stores/messenger'
@@ -41,6 +42,15 @@ export function useHighLevelClientEmits() {
 			)
 			messengerStore.setConversations(conversations)
 		},
+
+        async editMessage(converastionId:string, messageId:string,content:string){
+            
+            await chatClient.emit<EditMessageEmit>('@editMessage',{
+                conversation_id: converastionId,
+                message_id: messageId,
+                content: content,
+            })
+        },
 
 		async createOneToOneConversation(username: string) {
 			const response =
