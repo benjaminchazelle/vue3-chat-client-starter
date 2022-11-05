@@ -7,9 +7,15 @@ import { useAuthStore } from '@/stores/auth'
 const ps = defineProps<{
 	message: Message
 	urlIcon: string
+	class: string
 }>()
 
-const emit = defineEmits(['react', 'reply-to-message', 'delete-message', 'edit-message'])
+const emit = defineEmits([
+	'react',
+	'reply-to-message',
+	'delete-message',
+	'edit-message',
+])
 
 const props = ref(ps)
 
@@ -51,7 +57,7 @@ const editMessage = () => emit('edit-message')
 
 <template>
 	<div v-if="user?.username === props.message.from" class="message mine">
-		<div class="bubble top bottom">
+		<div class="bubble" :class="props.class">
 			<p v-if="props.message.reply_to" class="reply_content">
 				{{ props.message.reply_to.content }}
 			</p>
@@ -70,12 +76,8 @@ const editMessage = () => emit('edit-message')
 			<i
 				title="Supprimer"
 				class="circular trash icon"
-				@click="deleteMessage()">
-			</i>
-			<i 	title="Editer" 
-				class="circular edit icon"
-				@click="editMessage()">
-			</i>
+				@click="deleteMessage()"></i>
+			<i title="Editer" class="circular edit icon" @click="editMessage()"></i>
 			<i
 				title="Répondre"
 				class="circular reply icon"
@@ -87,7 +89,7 @@ const editMessage = () => emit('edit-message')
 			:title="props.message.from"
 			:src="props.urlIcon"
 			:alt="props.message.from" />
-		<div class="bubble top bottom">
+		<div class="bubble" :class="props.class">
 			<p v-if="props.message.reply_to" class="reply_content">
 				{{ props.message.reply_to.content }}
 			</p>

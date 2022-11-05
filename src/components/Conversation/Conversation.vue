@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, onUpdated, ref, toRefs, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import type { Conversation } from '@/client/types/business'
+import type {
+	Conversation,
+	Message as MessageType,
+} from '@/client/types/business'
 import Group from '@/components/Group/Group.vue'
 import Message from '@/components/Message/Message.vue'
 import { useHighLevelClientEmits } from '@/composables/emits'
@@ -178,6 +181,40 @@ async function deleteMessage(messageId: string): Promise<void> {
 
 	await clientEmits.deleteMessage(currentConversation.value.id, messageId)
 }
+
+function getClass(message: MessageType, messages: MessageType[]): string {
+	const c =
+		computed(() => {
+			const index = messages.findIndex((_message) => _message.id === message.id)
+			const previousMessage = messages[index - 1]
+			const nextMessage = messages[index + 1]
+
+			let result = 'top bottom'
+
+			if (
+				nextMessage &&
+				nextMessage.from === message.from &&
+				(!previousMessage || previousMessage.from !== message.from)
+			)
+				result = 'top'
+			else if (
+				previousMessage &&
+				previousMessage.from === message.from &&
+				(!nextMessage || nextMessage.from !== message.from)
+			)
+				result = 'bottom'
+			else if (
+				previousMessage &&
+				nextMessage &&
+				previousMessage.from === message.from &&
+				nextMessage.from === message.from
+			)
+				result = 'middle'
+			return result
+		}).value ?? 'middle'
+	console.log(c, message.from)
+	return c
+}
 </script>
 
 <template>
@@ -249,6 +286,7 @@ async function deleteMessage(messageId: string): Promise<void> {
 							<Message
 								:message="message"
 								:url-icon="getProfilePicture(message.from)"
+								:class="getClass(message, messages)"
 								@react="reactMessage($event)"
 								@reply-to-message="
 									replyToMessage(message.from, message.content, message.id)
