@@ -11,9 +11,9 @@ const clientEmits = useHighLevelClientEmits()
 
 const groupPanel = ref(false)
 
-const isEditMessage = ref(false);
+const isEditMessage = ref(false)
 
-const idMessageToEdit = ref('');
+const idMessageToEdit = ref('')
 
 const scrollElement = ref<HTMLElement | null>(null)
 
@@ -33,10 +33,10 @@ const messages = computed(() => {
 async function sendMessage(): Promise<void> {
 	if (!currentConversation.value) return
 
-    if(isEditMessage.value){
-        editMessage();
-        return;
-    }
+	if (isEditMessage.value) {
+		editMessage()
+		return
+	}
 
 	const temp = inputSentMessage.value
 	if (replyMessage.value.user !== '') {
@@ -52,24 +52,28 @@ async function sendMessage(): Promise<void> {
 	inputSentMessage.value = ''
 }
 
-function enterEditMode(messageId:string, messageContent:string): Promise<void> {
-    isEditMessage.value = true;
-    inputSentMessage.value = messageContent;
-    idMessageToEdit.value = messageId;
-
+async function enterEditMode(
+	messageId: string,
+	messageContent: string
+): Promise<void> {
+	isEditMessage.value = true
+	inputSentMessage.value = messageContent
+	idMessageToEdit.value = messageId
 }
 
-async function editMessage(): Promise<void>{
-    await clientEmits.editMessage(currentConversation.value.id,idMessageToEdit.value,inputSentMessage.value);
-    exitEditMode();
+async function editMessage(): Promise<void> {
+	if (!currentConversation.value) return
+	await clientEmits.editMessage(
+		currentConversation.value.id,
+		idMessageToEdit.value,
+		inputSentMessage.value
+	)
+	exitEditMode()
+}
 
-
-};
-
-
-function exitEditMode(){
-    isEditMessage.value = false;
-    inputSentMessage.value = '';
+function exitEditMode() {
+	isEditMessage.value = false
+	inputSentMessage.value = ''
 }
 
 function openGroupInformation(): void {
@@ -250,9 +254,9 @@ async function deleteMessage(messageId: string): Promise<void> {
 									replyToMessage(message.from, message.content, message.id)
 								"
 								@delete-message="deleteMessage(message.id)"
-                                @edit-message="enterEditMode(message.id , String(message.content))"
-
-                                 />
+								@edit-message="
+									enterEditMode(message.id, String(message.content))
+								" />
 						</div>
 					</div>
 				</div>
@@ -270,13 +274,13 @@ async function deleteMessage(messageId: string): Promise<void> {
 
 						<div class="ui fluid search">
 							<div class="ui icon input">
-                                <div v-if="isEditMessage" >
-                                    <i
-                                    title="Retour"
-                                    class="circular cancel icon"
-                                    @click="exitEditMode()"></i>
-                                    <p>Edition</p>
-                                </div>
+								<div v-if="isEditMessage">
+									<i
+										title="Retour"
+										class="circular cancel icon"
+										@click="exitEditMode()"></i>
+									<p>Edition</p>
+								</div>
 								<input
 									v-on:keyup.enter="sendMessage()"
 									v-model="inputSentMessage"
