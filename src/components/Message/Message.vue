@@ -86,6 +86,7 @@ const editMessage = () => emit('edit-message')
 	</div>
 	<div v-else class="message">
 		<img
+			v-if="props.class === 'bottom' || props.class === 'top bottom'"
 			:title="props.message.from"
 			:src="props.urlIcon"
 			:alt="props.message.from" />
