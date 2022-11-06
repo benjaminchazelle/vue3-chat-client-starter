@@ -33,6 +33,14 @@ const messages = computed(() => {
 	return currentConversation.value?.messages ?? []
 })
 
+watch(messages, () => {
+	if (!currentConversation.value || !messages.value) return
+	clientEmits.SeeConversationEmit(
+		currentConversation.value.id,
+		messages.value[messages.value.length - 1].id
+	)
+})
+
 async function sendMessage(): Promise<void> {
 	if (!currentConversation.value) return
 
