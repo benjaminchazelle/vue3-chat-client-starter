@@ -215,6 +215,25 @@ function getClass(message: MessageType, messages: MessageType[]): string {
 	console.log(c, message.from)
 	return c
 }
+
+const messageSeen = (messageID: string) =>
+	computed(() => {
+		if (!currentConversation.value) return []
+		const views = currentConversation.value.seen
+		const viewArray: {
+			id: number
+			user: string
+			message_id: string
+			time: string
+		}[] = []
+		let id = 0
+		for (const view in views) {
+			const value = views[view]
+			if (value === -1 || value.message_id !== messageID) continue
+			viewArray.push({ id: id++, user: view, ...value })
+		}
+		return viewArray
+	}).value
 </script>
 
 <template>
@@ -295,6 +314,16 @@ function getClass(message: MessageType, messages: MessageType[]): string {
 								@edit-message="
 									enterEditMode(message.id, String(message.content))
 								" />
+							<div class="view">
+								<img
+									v-for="view of messageSeen(message.id)"
+									:key="view.id"
+									:src="getProfilePicture(view.user)"
+									:title="`Vu par ${view.user} à ${convertStringToDate(
+										view.time
+									).toLocaleTimeString()}`"
+									alt="view" />
+							</div>
 						</div>
 					</div>
 				</div>
