@@ -10,7 +10,8 @@ import type {
 	ReactMessageEmit,
 	ReplyMessageEmit,
 	DeleteMessageEmit,
-    EditMessageEmit,
+	EditMessageEmit,
+	SeeConversationEmit,
 } from '@/client/types/emits'
 import { useLowLevelClient } from '@/client/useLowLevelClient'
 import { useMessengerStore } from '@/stores/messenger'
@@ -43,14 +44,17 @@ export function useHighLevelClientEmits() {
 			messengerStore.setConversations(conversations)
 		},
 
-        async editMessage(converastionId:string, messageId:string,content:string){
-            
-            await chatClient.emit<EditMessageEmit>('@editMessage',{
-                conversation_id: converastionId,
-                message_id: messageId,
-                content: content,
-            })
-        },
+		async editMessage(
+			converastionId: string,
+			messageId: string,
+			content: string
+		) {
+			await chatClient.emit<EditMessageEmit>('@editMessage', {
+				conversation_id: converastionId,
+				message_id: messageId,
+				content: content,
+			})
+		},
 
 		async createOneToOneConversation(username: string) {
 			const response =
@@ -146,6 +150,17 @@ export function useHighLevelClientEmits() {
 		async deleteMessage(conversationId: string, messageId: string) {
 			const response = await chatClient.emit<DeleteMessageEmit>(
 				'@deleteMessage',
+				{
+					conversation_id: conversationId,
+					message_id: messageId,
+				}
+			)
+			return response
+		},
+
+		async SeeConversationEmit(conversationId: string, messageId: string) {
+			const response = await chatClient.emit<SeeConversationEmit>(
+				'@seeConversation',
 				{
 					conversation_id: conversationId,
 					message_id: messageId,
