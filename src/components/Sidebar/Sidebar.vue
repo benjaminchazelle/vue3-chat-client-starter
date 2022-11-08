@@ -243,9 +243,9 @@ function sortConversations(conversations: Conversation[]): Conversation[] {
 					</div>
 					<div class="metadata">
 									
-						
+	
 					
-						<div class="text" > <!-- TODO changer la classe ici -->
+						<div class="text" > 
 							
 							{{
 								conversation.messages.length === 0
