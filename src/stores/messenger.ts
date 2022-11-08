@@ -47,6 +47,7 @@ export const useMessengerStore = defineStore('messenger', () => {
 	return {
 		authenticatedUsername,
 		users,
+		availableUsernames,
 		conversations,
 		currentConversation,
 		setConversations,
@@ -151,6 +152,5 @@ export const useMessengerStore = defineStore('messenger', () => {
 
 	function upsertUsersAvailable(usernames: string[]) {
 		availableUsernames.value = usernames
-		console.log(availableUsernames.value)
 	}
 })
