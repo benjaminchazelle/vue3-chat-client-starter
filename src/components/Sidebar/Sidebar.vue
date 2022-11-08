@@ -16,6 +16,8 @@ const { logout } = authStore
 
 const searchInput = ref('')
 
+const seenMessageClass = ref('')
+
 const { conversations, users, authenticatedUsername } = toRefs(messengerStore)
 
 const conversationSelectedId = ref('')
@@ -98,6 +100,33 @@ function titleConversation(conversation: Conversation): string {
 	return 'Anonymous'
 }
 
+const messageSeen = (conversation: Conversation) =>
+	computed(() => {
+		//Récuperer le conversationId
+		//if(!conversation.)
+		const viewers = conversation.seen; //Le view plus bas représente l'utilisateur 
+		for(const viewer in viewers){
+			
+		}
+		//TODO parcourir le tableau views, si la value de 
+		/*if (!currentConversation.value) return []
+		const views = currentConversation.value.seen
+		const viewArray: {
+			id: number
+			user: string
+			message_id: string
+			time: string
+		}[] = []
+		let id = 0
+		for (const view in views) { 
+			const value = views[view]
+			if (value === -1 || value.message_id !== messageID) continue
+			viewArray.push({ id: id++, user: view, ...value })
+		}
+		return viewArray */
+	}
+	).value
+
 function sortConversations(conversations: Conversation[]): Conversation[] {
 	return conversations.sort((a, b) =>
 		(b.messages.length === 0
@@ -163,10 +192,20 @@ function sortConversations(conversations: Conversation[]): Conversation[] {
 					</div>
 				</div>
 			</div>
+			
+			
 
 			<div
 				v-for="conversation in filteredConversations"
-				class="conversation"
+
+				v-bind:class="conversation.seen[user?.username].message_id?
+
+					conversation.seen[user?.username].message_id 
+					=== conversation.messages[conversation.messages.length-1].id 
+						? 'conversation'
+						: 'conversation new' 
+					:'conversation'"
+
 				:key="conversation.id"
 				:class="{
 					selected: conversation.id === conversationSelectedId,
@@ -174,6 +213,7 @@ function sortConversations(conversations: Conversation[]): Conversation[] {
 				:title="titleConversation(conversation)"
 				@click="openConversation(conversation.id)">
 				<a class="avatar">
+					
 					<img
 						v-if="conversation.participants.length < 3"
 						:src="getProfilePicture(conversation.participants)"
@@ -202,14 +242,20 @@ function sortConversations(conversations: Conversation[]): Conversation[] {
 						</span>
 					</div>
 					<div class="metadata">
-						<div class="text">
+									
+						
+					
+						<div class="text" > <!-- TODO changer la classe ici -->
+							
 							{{
 								conversation.messages.length === 0
 									? 'Nouvelle conversation'
 									: conversation.messages[conversation.messages.length - 1]
 											.content
 							}}
+							
 						</div>
+					
 						<span class="time">
 							{{
 								conversation.messages.length === 0
